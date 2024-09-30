@@ -7,10 +7,13 @@ from openpyxl import Workbook, load_workbook
 from datetime import datetime, timedelta
 import csv
 import time
-
+import logging
+logging.getLogger('tensorflow').disabled = True
 
 s = 1
-source = cv2.VideoCapture(s) 
+source = cv2.VideoCapture(s)
+# 
+
 year = datetime.now().year
 title = datetime.now().strftime("%B_%Y")
 
@@ -92,6 +95,7 @@ def start_camera():
         if not has_frame:
             break
         frame = cv2.flip(frame, 1)
+
         # frame_bw = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # resized_frame = cv2.resize(frame, (320, 240))
         # current_time = time.time()
@@ -110,13 +114,16 @@ def start_camera():
 
         try:
             # Perform face recognition by passing each frame to the models
-            result1 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Dlib", detector_backend = "dlib", align = True, distance_metric = "euclidean", anti_spoofing = True)
-            result2 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True)
-            result3 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "ArcFace", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True)
-            result4 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "GhostFaceNet", detector_backend = "opencv", align = False, distance_metric = "cosine", anti_spoofing = True)
-            result5 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "SFace", detector_backend = "ssd", align = True, distance_metric = "euclidean", anti_spoofing = True)
-            result6 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet512", detector_backend = "retinaface", align = True, distance_metric = "cosine", anti_spoofing = True)
-            result7 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True)
+            #refresh_database = False so that the model may work without the photos in the database
+            #silent = True to suppress the warnings
+            #To add more photos, add them to the database folder and set refresh_database = True
+            result1 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Dlib", detector_backend = "dlib", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)
+            result2 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
+            result3 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "ArcFace", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
+            result4 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "GhostFaceNet", detector_backend = "opencv", align = False, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
+            result5 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "SFace", detector_backend = "ssd", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)
+            result6 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet512", detector_backend = "retinaface", align = True, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
+            result7 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
 
             if len(result1[0]['identity']) > 0:
                 
@@ -183,28 +190,43 @@ def start_camera():
                 cv2.rectangle(frame, (xmin, ymin - 25), (xmax, ymin),(255, 255, 255), -1)
                 cv2.putText(frame, name, (xmin, ymin), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0),2, cv2.LINE_AA)
 
+
+                print(f"Name: {name}")
                 #Mark attendance
 
-                for key in students_dict.keys():
-                    if students_dict[key] == name:
-                        roll_no = key
-                        break
                 
-                for col in ws.iter_cols(min_row = 1, max_col = 1, max_row = ws.max_row):
-                    for cell in col:
-                        if cell.value == today:
-                            if datetime.now().hour < 12:
-                                target_cell = ws.cell(row = cell.row, column = roll_no + 2)
-                            else:
-                                target_cell = ws.cell(row = cell.row + 1, column = roll_no + 2)                                
+                
+                key1 = cv2.waitKey(1)
 
-                            if target_cell.value is None:
-                                target_cell.value = present_time
-                                wb.save(f"attendance_{year}.xlsx")
-                                print(f"Attendance marked for {name} at {present_time}")
-                            else:
-                                print(f"Attendance already marked for {name} at {target_cell.value}")
+                if key1 == 13:
+
+                    for k in students_dict.keys():
+                        if students_dict[k] == name:
+                            roll_no = k
                             break
+
+                    for col in ws.iter_cols(min_row = 1, max_col = 1, max_row = ws.max_row):
+                        for cell in col:
+                            if cell.value == today:
+                                if datetime.now().hour < 12:
+                                    target_cell = ws.cell(row = cell.row, column = roll_no + 2)
+                                else:
+                                    target_cell = ws.cell(row = cell.row + 1, column = roll_no + 2)                                
+
+                                if target_cell.value is None:
+                                    target_cell.value = present_time
+                                    wb.save(f"attendance_{year}.xlsx")
+                                    print(f"Attendance marked for {name} at {present_time}")
+                                else:
+                                    print(f"Attendance already marked for {name} at {target_cell.value}")
+                                break
+
+                elif key1 == ord('c') or key1 == ord('C'):
+                    continue
+
+                elif key1 == ord('q') or key1 == ord('Q') or key1 == 27:
+                    alive = False
+                    break
             
 
 
