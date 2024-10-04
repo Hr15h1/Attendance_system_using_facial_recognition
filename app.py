@@ -134,8 +134,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         #Buttons for starting and stopping the camera
-        # self.startButton.clicked.connect(self.start_camera_wrapper)
-        # self.stopButton.clicked.connect(self.stop_camera_wrapper)  # Connect stop button
+        self.startButton.clicked.connect(self.start_camera_wrapper)
+        self.stopButton.clicked.connect(self.stop_camera_wrapper)  # Connect stop button
 
         self.cap = None  # Video capture object
         self.alive = False
