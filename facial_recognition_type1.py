@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 import csv
 import time
 import logging
+
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtWidgets import QGraphicsScene
+
 logging.getLogger('tensorflow').disabled = True
 
 s = 1
@@ -22,17 +26,19 @@ title = datetime.now().strftime("%B_%Y")
 
 
 
-def stop_camera(window_name):
+def stop_camera():
 
     # Release the video source and destroy the window
     source.release()
-    cv2.destroyWindow(window_name)
-
-def start_camera():
+def start_camera(camera_view, plain_text_edit, main_window):
+    
     alive = True
     window_name = "Attendance System"
     # Create a window to display the video feed
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    # cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+
+    scene = QGraphicsScene()
+    camera_view.setScene(scene)
 
 
     # Specify the CSV file name
@@ -90,7 +96,7 @@ def start_camera():
 
     
     # start_time = time.time()
-    while alive:
+    while main_window.alive:
         has_frame, frame = source.read()
         if not has_frame:
             break
@@ -118,65 +124,65 @@ def start_camera():
             #silent = True to suppress the warnings
             #To add more photos, add them to the database folder and set refresh_database = True
             result1 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Dlib", detector_backend = "dlib", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)
-            result2 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
-            result3 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "ArcFace", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
-            result4 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "GhostFaceNet", detector_backend = "opencv", align = False, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
-            result5 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "SFace", detector_backend = "ssd", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)
-            result6 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet512", detector_backend = "retinaface", align = True, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
-            result7 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
+            # result2 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
+            # result3 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "ArcFace", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
+            # result4 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "GhostFaceNet", detector_backend = "opencv", align = False, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
+            # result5 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "SFace", detector_backend = "ssd", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)
+            # result6 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet512", detector_backend = "retinaface", align = True, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
+            # result7 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Facenet", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
 
             if len(result1[0]['identity']) > 0:
                 
                 n1 = result1[0]['identity'][0].split('\\')[1]
             else:
                 n1 = 'empty'
-            if len(result2[0]['identity']) > 0:
+            # if len(result2[0]['identity']) > 0:
                 
-                n2 = result2[0]['identity'][0].split('\\')[1]
-            else:
-                n2 = 'empty'
-            if len(result3[0]['identity']) > 0:
+            #     n2 = result2[0]['identity'][0].split('\\')[1]
+            # else:
+            #     n2 = 'empty'
+            # if len(result3[0]['identity']) > 0:
                 
-                n3 = result3[0]['identity'][0].split('\\')[1]
-            else:
-                n3 = 'empty'
-            if len(result4[0]['identity']) > 0:
+            #     n3 = result3[0]['identity'][0].split('\\')[1]
+            # else:
+            #     n3 = 'empty'
+            # if len(result4[0]['identity']) > 0:
                 
-                n4 = result4[0]['identity'][0].split('\\')[1]
-            else:
-                n4 = 'empty'
-            if len(result5[0]['identity']) > 0:
+            #     n4 = result4[0]['identity'][0].split('\\')[1]
+            # else:
+            #     n4 = 'empty'
+            # if len(result5[0]['identity']) > 0:
                 
-                n5 = result5[0]['identity'][0].split('\\')[1]
-            else:
-                n5 = 'empty'
-            if len(result6[0]['identity']) > 0:
+            #     n5 = result5[0]['identity'][0].split('\\')[1]
+            # else:
+            #     n5 = 'empty'
+            # if len(result6[0]['identity']) > 0:
                 
-                n6 = result6[0]['identity'][0].split('\\')[1]
-            else:
-                n6 = 'empty'
-            if len(result7[0]['identity']) > 0:
+            #     n6 = result6[0]['identity'][0].split('\\')[1]
+            # else:
+            #     n6 = 'empty'
+            # if len(result7[0]['identity']) > 0:
                 
-                n7 = result7[0]['identity'][0].split('\\')[1]
-            else:
-                n7 = 'empty'
+            #     n7 = result7[0]['identity'][0].split('\\')[1]
+            # else:
+            #     n7 = 'empty'
 
         
 
-            n = [n1, n2, n3, n4, n5, n6, n7] #list of names generated by the models
+            # n = [n1, n2, n3, n4, n5] #list of names generated by the models
 
-            name = max(set(n), key = n.count) #get the most common name from the list n
+            # name = max(set(n), key = n.count) #get the most common name from the list n
 
 
             # If the name is empty, assign the first non-empty name from list n
-            if name == 'empty':
-                for names in n:
-                    if names != 'empty':
-                        name = names
+            # if name == 'empty':
+            #     for names in n:
+            #         if names != 'empty':
+            #             name = names
 
 
             if len(result1[0]['identity']) > 0:
-                # name = n1
+                name = n1
                 # Get the bounding box coordinates
                 xmin = int(result1[0]['source_x'][0])
                 ymin = int(result1[0]['source_y'][0])
@@ -193,6 +199,16 @@ def start_camera():
 
                 print(f"Name: {name}")
                 #Mark attendance
+                
+                plain_text_edit.setPlainText(f"Name: {name}")
+
+                height, width, _ = frame.shape
+                bytes_per_line = 3 * width
+                q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+
+                pixmap = QPixmap.fromImage(q_img)
+                scene.clear()
+                scene.addPixmap(pixmap)
 
                 
                 
@@ -225,7 +241,7 @@ def start_camera():
                     continue
 
                 elif key1 == ord('q') or key1 == ord('Q') or key1 == 27:
-                    alive = False
+                    main_window.alive = False
                     break
             
 
@@ -245,13 +261,22 @@ def start_camera():
                 cv2.putText(frame, "Spoofing Detected", (x_min, y_min), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2, cv2.LINE_AA)
         
         # Display the frame
-        cv2.imshow(window_name, frame)
-        cv2.resizeWindow(window_name, frame.shape[1], frame.shape[0])
+
+        height, width, _ = frame.shape
+        bytes_per_line = 3 * width
+        q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+
+        pixmap = QPixmap.fromImage(q_img)
+        scene.clear()
+        scene.addPixmap(pixmap)
+
+        # cv2.imshow(window_name, frame)
+        # cv2.resizeWindow(window_name, frame.shape[1], frame.shape[0])
         # Check for key press to exit
         key = cv2.waitKey(1)
         if key == ord('q') or key == ord('Q') or key == 27:
-            alive = False
+            main_window.alive = False
 
-    stop_camera(window_name)
+    stop_camera()
 
-start_camera()
+# start_camera()
