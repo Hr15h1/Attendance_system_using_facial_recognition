@@ -6,21 +6,11 @@ from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+    QPalette, QPixmap, QRadialGradient, QTransform, QKeyEvent)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
     QPlainTextEdit, QPushButton, QSizePolicy, QStatusBar,
-    QVBoxLayout, QWidget)
+    QVBoxLayout, QWidget, QGraphicsScene, QLabel)
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
-    QPlainTextEdit, QPushButton, QSizePolicy, QStatusBar,
-    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -53,6 +43,11 @@ class Ui_MainWindow(object):
         self.cameraView.setSizePolicy(sizePolicy1)
         self.cameraView.setMinimumSize(QSize(640, 480))
         self.cameraView.setMaximumSize(QSize(640, 480))
+        self.cameraView.setStyleSheet(u"QGraphicsView#cameraView{\n"
+"		\n"
+"	border-color: rgb(131, 131, 131);\n"
+"   background-color: rgb(172, 172, 172);\n"
+"}")
 
         self.verticalLayout_5.addWidget(self.cameraView)
 
@@ -62,9 +57,24 @@ class Ui_MainWindow(object):
         self.startButton.setObjectName(u"startButton")
         self.startButton.setMinimumSize(QSize(210, 59))
         self.startButton.setMaximumSize(QSize(210, 59))
-        icon = QIcon(QIcon.fromTheme(u"media-playback-start"))
+        font = QFont()
+        font.setPointSize(12)
+        self.startButton.setFont(font)
+        self.startButton.setStyleSheet(u"QPushButton#startButton{\n"
+"		\n"
+"	border-radius: 10px;\n"
+"	border-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 0, 0);\n"
+"	background-color: rgb(203, 254, 197);\n"
+"\n"
+"}\n"
+"QPushButton#startButton:hover {	\n"
+"	background-color: rgb(148, 255, 135);\n"
+"}")
+        icon = QIcon()
+        icon.addFile(u"icons/formkit--start (1).png", QSize(), QIcon.Normal, QIcon.Off)
         self.startButton.setIcon(icon)
-        self.startButton.setIconSize(QSize(20, 20))
+        self.startButton.setIconSize(QSize(25, 25))
 
         self.horizontalLayout_6.addWidget(self.startButton)
 
@@ -72,9 +82,23 @@ class Ui_MainWindow(object):
         self.stopButton.setObjectName(u"stopButton")
         self.stopButton.setMinimumSize(QSize(210, 59))
         self.stopButton.setMaximumSize(QSize(210, 59))
-        icon1 = QIcon(QIcon.fromTheme(u"media-playback-stop"))
+        self.stopButton.setFont(font)
+        self.stopButton.setAutoFillBackground(False)
+        self.stopButton.setStyleSheet(u"QPushButton#stopButton{\n"
+"		\n"
+"	border-radius: 10px;\n"
+"	border-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 0, 0);\n"
+"	background-color: rgb(253, 201, 201);\n"
+"\n"
+"}\n"
+"QPushButton#stopButton:hover {	\n"
+"	background-color: rgb(255, 145, 145);\n"
+"}")
+        icon1 = QIcon()
+        icon1.addFile(u"icons/material-symbols--stop.png", QSize(), QIcon.Normal, QIcon.Off)
         self.stopButton.setIcon(icon1)
-        self.stopButton.setIconSize(QSize(20, 20))
+        self.stopButton.setIconSize(QSize(30, 30))
 
         self.horizontalLayout_6.addWidget(self.stopButton)
 
@@ -91,11 +115,20 @@ class Ui_MainWindow(object):
         self.plainTextEdit = QPlainTextEdit(self.horizontalLayoutWidget)
         self.plainTextEdit.setObjectName(u"plainTextEdit")
         sizePolicy1.setHeightForWidth(self.plainTextEdit.sizePolicy().hasHeightForWidth())
-        self.plainTextEdit.setSizePolicy(sizePolicy1)
-        self.plainTextEdit.setMinimumSize(QSize(405, 144))
-        self.plainTextEdit.setMaximumSize(QSize(405, 244))
+        self.label = QLabel(self.horizontalLayoutWidget)
+        self.label.setObjectName(u"label")
+        sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy1)
+        self.label.setMinimumSize(QSize(429, 60))
+        self.label.setMaximumSize(QSize(429, 60))
+        font1 = QFont()
+        font1.setFamilies([u"Bell MT"])
+        font1.setPointSize(24)
+        font1.setBold(True)
+        self.label.setFont(font1)
 
-        self.verticalLayout_3.addWidget(self.plainTextEdit)
+
+        self.verticalLayout_3.addWidget(self.label)
 
         self.plainTextEdit_2 = QPlainTextEdit(self.horizontalLayoutWidget)
         self.plainTextEdit_2.setObjectName(u"plainTextEdit_2")
@@ -103,6 +136,13 @@ class Ui_MainWindow(object):
         self.plainTextEdit_2.setSizePolicy(sizePolicy1)
         self.plainTextEdit_2.setMinimumSize(QSize(405, 66))
         self.plainTextEdit_2.setMaximumSize(QSize(405, 66))
+        self.plainTextEdit_2.setStyleSheet(u"QPlainTextEdit#plainTextEdit_2{\n"
+"		\n"
+"	border-color: rgb(131, 131, 131);\n"
+"	font: 700 24pt \"Segoe UI\";\n"
+"	color: rgb(255, 255, 255);\n"
+"\n"
+"}")
 
         self.verticalLayout_3.addWidget(self.plainTextEdit_2)
 
@@ -124,7 +164,6 @@ class Ui_MainWindow(object):
         self.startButton.setText(QCoreApplication.translate("MainWindow", u"Start Camera", None))
         self.stopButton.setText(QCoreApplication.translate("MainWindow", u"Stop Camera", None))
     # retranslateUi
-    # retranslateUi
 
 
 
@@ -139,12 +178,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.cap = None  # Video capture object
         self.alive = False
+        self.scene = QGraphicsScene()
+        self.cameraView.setScene(self.scene)
+
+        self.setFocusPolicy(Qt.StrongFocus)
+
     def start_camera_wrapper(self):
         self.alive = True
 
-        start_camera(self.cameraView, self.plainTextEdit, self)
+        start_camera(self.cameraView, self.label, self)
     def stop_camera_wrapper(self):
         self.alive = False  # Set the flag to False to stop the camera
+        self.scene.clear()
         stop_camera()
 
 
@@ -154,6 +199,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.cap.release()
         super().closeEvent(event)
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+        
+        elif event.key() in (Qt.Key_Enter, Qt.Key_Return):
+            print(f"Name is : {self.label.text()}")
+
+            #Add logic to mark attendance to the database here
+
+
+        else:
+            super().keyPressEvent(event)
 
 
 if __name__ == "__main__":

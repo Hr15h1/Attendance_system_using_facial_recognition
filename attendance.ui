@@ -64,6 +64,12 @@
            <height>480</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QGraphicsView#cameraView{
+		
+	border-color: rgb(131, 131, 131);
+}</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -82,16 +88,31 @@
              <height>59</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton#startButton{
+		
+	border-radius: 10px;
+	border-color: rgb(0, 0, 0);
+	background-color: rgb(203, 254, 197);
+
+}</string>
+           </property>
            <property name="text">
             <string>Start Camera</string>
            </property>
            <property name="icon">
-            <iconset theme="media-playback-start"/>
+            <iconset>
+             <normaloff>formkit--start (1).png</normaloff>formkit--start (1).png</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>25</width>
+             <height>25</height>
             </size>
            </property>
           </widget>
@@ -110,16 +131,34 @@
              <height>59</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton#stopButton{
+		
+	border-radius: 10px;
+	border-color: rgb(0, 0, 0);
+	background-color: rgb(253, 201, 201);
+	
+}</string>
+           </property>
            <property name="text">
             <string>Stop Camera</string>
            </property>
            <property name="icon">
-            <iconset theme="media-playback-stop"/>
+            <iconset>
+             <normaloff>material-symbols--stop.png</normaloff>material-symbols--stop.png</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
           </widget>
@@ -165,6 +204,15 @@
            <height>244</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QPlainTextEdit#plainTextEdit{
+		
+	border-color: rgb(131, 131, 131);
+	font: 700 24pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+
+}</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -186,6 +234,15 @@
            <width>405</width>
            <height>66</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPlainTextEdit#plainTextEdit_2{
+		
+	border-color: rgb(131, 131, 131);
+	font: 700 24pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+
+}</string>
          </property>
         </widget>
        </item>

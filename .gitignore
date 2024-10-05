@@ -1,3 +1,4 @@
 attendance/
 database/*/
 attendance_2024.xlsx
+__pycache__/*/

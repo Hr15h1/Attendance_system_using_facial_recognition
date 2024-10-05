@@ -30,7 +30,7 @@ def stop_camera():
 
     # Release the video source and destroy the window
     source.release()
-def start_camera(camera_view, plain_text_edit, main_window):
+def start_camera(camera_view, label, main_window):
     
     alive = True
     window_name = "Attendance System"
@@ -200,7 +200,7 @@ def start_camera(camera_view, plain_text_edit, main_window):
                 print(f"Name: {name}")
                 #Mark attendance
                 
-                plain_text_edit.setPlainText(f"Name: {name}")
+                label.setText(f"Name: {name}")
 
                 height, width, _ = frame.shape
                 bytes_per_line = 3 * width
