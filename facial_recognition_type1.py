@@ -30,7 +30,7 @@ def stop_camera():
 
     # Release the video source and destroy the window
     source.release()
-def start_camera(camera_view, label, main_window):
+def start_camera(camera_view, name_label,roll_label, main_window):
     
     alive = True
     window_name = "Attendance System"
@@ -200,7 +200,15 @@ def start_camera(camera_view, label, main_window):
                 print(f"Name: {name}")
                 #Mark attendance
                 
-                label.setText(f"Name: {name}")
+                name_label.setText(f"Name: {name}")
+
+                for k in students_dict.keys():
+                        if students_dict[k] == name:
+                            roll_no = k
+                            break
+
+                roll_label.setText(f"Roll No: {roll_no}")
+
 
                 height, width, _ = frame.shape
                 bytes_per_line = 3 * width

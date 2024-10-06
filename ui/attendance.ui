@@ -67,7 +67,7 @@
          <property name="styleSheet">
           <string notr="true">QGraphicsView#cameraView{
 		
-	border-color: rgb(131, 131, 131);
+	border-color: rgb(0, 0, 0);
 }</string>
          </property>
         </widget>
@@ -100,6 +100,9 @@
 	border-color: rgb(0, 0, 0);
 	background-color: rgb(203, 254, 197);
 
+}
+QPushButton#startButton:hover {	
+	background-color: rgb(203, 254, 197);
 }</string>
            </property>
            <property name="text">
@@ -185,7 +188,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit">
+        <widget class="QLabel" name="label">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -194,24 +197,25 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>405</width>
-           <height>144</height>
+           <width>429</width>
+           <height>60</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>405</width>
-           <height>244</height>
+           <width>429</width>
+           <height>60</height>
           </size>
          </property>
-         <property name="styleSheet">
-          <string notr="true">QPlainTextEdit#plainTextEdit{
-		
-	border-color: rgb(131, 131, 131);
-	font: 700 24pt &quot;Segoe UI&quot;;
-	color: rgb(255, 255, 255);
-
-}</string>
+         <property name="font">
+          <font>
+           <family>Bell MT</family>
+           <pointsize>24</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -225,13 +229,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>405</width>
+           <width>429</width>
            <height>66</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>405</width>
+           <width>429</width>
            <height>66</height>
           </size>
          </property>
@@ -251,7 +255,6 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
