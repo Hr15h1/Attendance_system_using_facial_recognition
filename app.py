@@ -1,170 +1,78 @@
 import sys
-from facial_recognition_type1 import start_camera, stop_camera
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform, QKeyEvent)
+import cv2
+from facial_recognition_type1 import start_camera
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
+from PySide6.QtGui import (QFont, QKeyEvent)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
-    QPlainTextEdit,QGridLayout, QFrame, QPushButton, QSizePolicy, QStatusBar,
-    QVBoxLayout, QWidget, QGraphicsScene, QLabel)
+    QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel)
+import mysql.connector
+from mysql.connector import errors
+import time
+import ctypes
 
+
+#Connect to existing database or create a new one and connect to it
+try:
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="admin",
+        database = "msccsai_students"
+    )
+except errors.ProgrammingError:
+    mydb = mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="admin",
+    )
+    mycursor = mydb.cursor()
+    mycursor.execute("CREATE DATABASE msccsai_students")
+    mydb.close()
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="admin",
+        database = "msccsai_students"
+    )
+
+
+#Function to mark attendance
+
+def mark_attendance(label_name, roll_no):
+    roll_no = roll_no.split(": ")[1]
+    mycursor = mydb.cursor()
+
+    #Create a table for each month
+    query = f"CREATE TABLE IF NOT EXISTS {time.strftime('%B')}_{time.strftime('%Y')} (Attendance_ID int AUTO_INCREMENT, student_rollno int, date DATE, session ENUM('Morning', 'Afternoon'), status ENUM('Present', 'Late'), PRIMARY KEY(Attendance_ID), FOREIGN KEY(student_rollno) REFERENCES students_details(student_rollno))"
+    mycursor.execute(query)
+
+    #Check if the session is morning or afternoon
+    if time.localtime().tm_hour < 12:
+        session = "Morning"
+    else:
+        session = "Afternoon"
+
+        #Check if the attendance for the morning session is marked or not using a dialog box
+        status_morning = ctypes.windll.user32.MessageBoxW(0, "Have you marked the attendance for the morning session?", "Mark Attendance", 4)
+        if status_morning == 6:
+            status = "Present"
+        else:
+            status = "Late"
+
+            #Insert the attendance for the morning session
+            sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, date, session, status) VALUES ({roll_no}, '{time.strftime('%Y-%m-%d')}', 'Morning', '{status}')"
+            mycursor.execute(sql)
+
+    #Insert the attendance for the afternoon session
+    sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, date, session, status) VALUES ({roll_no}, '{time.strftime('%Y-%m-%d')}', '{session}', 'Present')"
+    mycursor.execute(sql)
+    mydb.commit()
+
+    #Display a message box to show that the attendance has been marked
+    ctypes.windll.user32.MessageBoxW(0, f"Attendance for {label_name.text()} marked successfully", "Mark Attendance", 0)
+    return
 
 class Ui_MainWindow(object):
-#     def setupUi(self, MainWindow):
-#         if not MainWindow.objectName():
-#             MainWindow.setObjectName(u"MainWindow")
-#         MainWindow.resize(1082, 720)
-#         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-#         sizePolicy.setHorizontalStretch(0)
-#         sizePolicy.setVerticalStretch(0)
-#         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
-#         MainWindow.setSizePolicy(sizePolicy)
-#         MainWindow.setMinimumSize(QSize(1063, 720))
-#         MainWindow.setMaximumSize(QSize(16777215, 16777215))
-#         self.centralwidget = QWidget(MainWindow)
-#         self.centralwidget.setObjectName(u"centralwidget")
-#         self.horizontalLayoutWidget = QWidget(self.centralwidget)
-#         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-#         self.horizontalLayoutWidget.setGeometry(QRect(0, 0, 1081, 691))
-#         self.horizontalLayout_5 = QHBoxLayout(self.horizontalLayoutWidget)
-#         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-#         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
-#         self.verticalLayout_5 = QVBoxLayout()
-#         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-#         self.cameraView = QGraphicsView(self.horizontalLayoutWidget)
-#         self.cameraView.setObjectName(u"cameraView")
-#         sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-#         sizePolicy1.setHorizontalStretch(0)
-#         sizePolicy1.setVerticalStretch(0)
-#         sizePolicy1.setHeightForWidth(self.cameraView.sizePolicy().hasHeightForWidth())
-#         self.cameraView.setSizePolicy(sizePolicy1)
-#         self.cameraView.setMinimumSize(QSize(640, 480))
-#         self.cameraView.setMaximumSize(QSize(640, 480))
-#         self.cameraView.setStyleSheet(u"QGraphicsView#cameraView{\n"
-# "		\n"
-# "	border-color: rgb(131, 131, 131);\n"
-# "   background-color: rgb(172, 172, 172);\n"
-# "}")
-
-#         self.verticalLayout_5.addWidget(self.cameraView)
-
-#         self.horizontalLayout_6 = QHBoxLayout()
-#         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-#         self.startButton = QPushButton(self.horizontalLayoutWidget)
-#         self.startButton.setObjectName(u"startButton")
-#         self.startButton.setMinimumSize(QSize(210, 59))
-#         self.startButton.setMaximumSize(QSize(210, 59))
-#         font = QFont()
-#         font.setPointSize(12)
-#         self.startButton.setFont(font)
-#         self.startButton.setStyleSheet(u"QPushButton#startButton{\n"
-# "		\n"
-# "	border-radius: 10px;\n"
-# "	border-color: rgb(0, 0, 0);\n"
-# "	color: rgb(0, 0, 0);\n"
-# "	background-color: rgb(203, 254, 197);\n"
-# "\n"
-# "}\n"
-# "QPushButton#startButton:hover {	\n"
-# "	background-color: rgb(148, 255, 135);\n"
-# "}")
-#         icon = QIcon()
-#         icon.addFile(u"icons/formkit--start (1).png", QSize(), QIcon.Normal, QIcon.Off)
-#         self.startButton.setIcon(icon)
-#         self.startButton.setIconSize(QSize(25, 25))
-
-#         self.horizontalLayout_6.addWidget(self.startButton)
-
-#         self.stopButton = QPushButton(self.horizontalLayoutWidget)
-#         self.stopButton.setObjectName(u"stopButton")
-#         self.stopButton.setMinimumSize(QSize(210, 59))
-#         self.stopButton.setMaximumSize(QSize(210, 59))
-#         self.stopButton.setFont(font)
-#         self.stopButton.setAutoFillBackground(False)
-#         self.stopButton.setStyleSheet(u"QPushButton#stopButton{\n"
-# "		\n"
-# "	border-radius: 10px;\n"
-# "	border-color: rgb(0, 0, 0);\n"
-# "	color: rgb(0, 0, 0);\n"
-# "	background-color: rgb(253, 201, 201);\n"
-# "\n"
-# "}\n"
-# "QPushButton#stopButton:hover {	\n"
-# "	background-color: rgb(255, 145, 145);\n"
-# "}")
-#         icon1 = QIcon()
-#         icon1.addFile(u"icons/material-symbols--stop.png", QSize(), QIcon.Normal, QIcon.Off)
-#         self.stopButton.setIcon(icon1)
-#         self.stopButton.setIconSize(QSize(30, 30))
-
-#         self.horizontalLayout_6.addWidget(self.stopButton)
-
-
-#         self.verticalLayout_5.addLayout(self.horizontalLayout_6)
-
-
-#         self.horizontalLayout_5.addLayout(self.verticalLayout_5)
-
-#         self.verticalLayout_3 = QVBoxLayout()
-#         self.verticalLayout_3.setSpacing(0)
-#         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-#         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-#         # self.plainTextEdit = QPlainTextEdit(self.horizontalLayoutWidget)
-#         # self.plainTextEdit.setObjectName(u"plainTextEdit")
-#         # sizePolicy1.setHeightForWidth(self.plainTextEdit.sizePolicy().hasHeightForWidth())
-#         self.label = QLabel(self.horizontalLayoutWidget)
-#         self.label.setObjectName(u"label")
-#         sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-#         self.label.setSizePolicy(sizePolicy1)
-#         self.label.setMinimumSize(QSize(429, 60))
-#         self.label.setMaximumSize(QSize(429, 60))
-#         font1 = QFont()
-#         font1.setFamilies([u"Bell MT"])
-#         font1.setPointSize(24)
-#         font1.setBold(True)
-#         self.label.setFont(font1)
-
-
-#         self.verticalLayout_3.addWidget(self.label)
-
-#         self.plainTextEdit_2 = QPlainTextEdit(self.horizontalLayoutWidget)
-#         self.plainTextEdit_2.setObjectName(u"plainTextEdit_2")
-#         sizePolicy1.setHeightForWidth(self.plainTextEdit_2.sizePolicy().hasHeightForWidth())
-#         self.plainTextEdit_2.setSizePolicy(sizePolicy1)
-#         self.plainTextEdit_2.setMinimumSize(QSize(429, 66))
-#         self.plainTextEdit_2.setMaximumSize(QSize(429, 66))
-#         self.plainTextEdit_2.setStyleSheet(u"QPlainTextEdit#plainTextEdit_2{\n"
-# "		\n"
-# "	border-color: rgb(131, 131, 131);\n"
-# "	font: 700 24pt \"Segoe UI\";\n"
-# "	color: rgb(255, 255, 255);\n"
-# "\n"
-# "}")
-
-#         self.verticalLayout_3.addWidget(self.plainTextEdit_2)
-
-
-#         self.horizontalLayout_5.addLayout(self.verticalLayout_3)
-
-#         MainWindow.setCentralWidget(self.centralwidget)
-#         # self.statusbar = QStatusBar(MainWindow)
-#         # self.statusbar.setObjectName(u"statusbar")
-#         # MainWindow.setStatusBar(self.statusbar)
-
-#         self.retranslateUi(MainWindow)
-
-#         QMetaObject.connectSlotsByName(MainWindow)
-#     # setupUi
-
-#     def retranslateUi(self, MainWindow):
-#         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-#         self.startButton.setText(QCoreApplication.translate("MainWindow", u"Start Camera", None))
-#         self.stopButton.setText(QCoreApplication.translate("MainWindow", u"Stop Camera", None))
-#     # retranslateUi
-
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
@@ -177,10 +85,16 @@ class Ui_MainWindow(object):
         MainWindow.setStyleSheet(u"background-color: rgb(61, 56, 70);")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+
+        #Create a grid layout
         self.gridLayout = QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(u"gridLayout")
+
+        #Create a horizontal layout
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+
+        #Create a camera view
         self.camera_view = QGraphicsView(self.centralwidget)
         self.camera_view.setObjectName(u"camera_view")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -190,6 +104,8 @@ class Ui_MainWindow(object):
         self.camera_view.setSizePolicy(sizePolicy1)
         self.camera_view.setMinimumSize(QSize(640, 480))
         self.camera_view.setMaximumSize(QSize(640, 480))
+
+        #Set the style sheet for the camera view
         self.camera_view.setStyleSheet(u"border-color: rgb(255, 255, 255);\n"
 "border: 2px solid rgb(255, 255, 255);\n"
 "background-color: rgb(154, 153, 150);")
@@ -348,23 +264,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #Buttons for starting and stopping the camera
         self.start_button.clicked.connect(self.start_camera_wrapper)
         self.stop_button.clicked.connect(self.stop_camera_wrapper)  # Connect stop button
+        self.pushButton.clicked.connect(lambda: mark_attendance(self.label_name, self.label_roll.text()))
 
         self.cap = None  # Video capture object
         self.alive = False
         self.scene = QGraphicsScene()
         self.camera_view.setScene(self.scene)
+        self.source = None
+        self.s = 1
 
         self.setFocusPolicy(Qt.StrongFocus)
 
+    # Wrapper functions for starting and stopping the camera
     def start_camera_wrapper(self):
         self.alive = True
-
+        self.source = cv2.VideoCapture(self.s)
         start_camera(self.camera_view, self.label_name,self.label_roll, self)
     def stop_camera_wrapper(self):
         self.alive = False  # Set the flag to False to stop the camera
         self.scene.clear()
-        stop_camera()
+        if self.source is not None:
+            self.source.release()
 
+
+    # Override the closeEvent method to release the camera
 
     def closeEvent(self, event):
         self.alive = False
@@ -372,18 +295,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.cap.release()
         super().closeEvent(event)
 
+
+    # Override the keyPressEvent method to close the window when the escape key is pressed
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
             self.close()
         
         elif event.key() in (Qt.Key_Enter, Qt.Key_Return):
-            print(f"Name is : {self.label_name.text()} and roll no is {self.label_roll.text()}")
+            mark_attendance(self.label_name, self.label_roll.text())
 
-            #Add logic to mark attendance to the database here
 
 
         else:
             super().keyPressEvent(event)
+
+
+
 
 
 if __name__ == "__main__":

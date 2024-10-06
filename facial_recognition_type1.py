@@ -14,9 +14,6 @@ from PySide6.QtWidgets import QGraphicsScene
 
 logging.getLogger('tensorflow').disabled = True
 
-s = 1
-source = cv2.VideoCapture(s)
-# 
 
 year = datetime.now().year
 title = datetime.now().strftime("%B_%Y")
@@ -26,14 +23,14 @@ title = datetime.now().strftime("%B_%Y")
 
 
 
-def stop_camera():
+# def stop_camera(source):
 
     # Release the video source and destroy the window
-    source.release()
+    # source.release()
 def start_camera(camera_view, name_label,roll_label, main_window):
-    
-    alive = True
-    window_name = "Attendance System"
+    source = main_window.source
+    # alive = True
+    # window_name = "Attendance System"
     # Create a window to display the video feed
     # cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
@@ -57,39 +54,39 @@ def start_camera(camera_view, name_label,roll_label, main_window):
             students_dict[key] = value
 
 
-    present_time = datetime.now().strftime("%I:%M:%S")
-    year = datetime.now().year
-    title = datetime.now().strftime("%B_%Y")
-    today = datetime.now().strftime("%d-%m-%Y")
+    # present_time = datetime.now().strftime("%I:%M:%S")
+    # year = datetime.now().year
+    # title = datetime.now().strftime("%B_%Y")
+    # today = datetime.now().strftime("%d-%m-%Y")
 
     #Try to load the attendance workbook
-    try:
-        wb = load_workbook(f"attendance_{datetime.now().year}.xlsx")
+    # try:
+    #     wb = load_workbook(f"attendance_{datetime.now().year}.xlsx")
     #If it doesn't exist, create a new workbook
-    except FileNotFoundError:
-        wb = Workbook()
-        wb.save(f"attendance_{datetime.now().year}.xlsx")
-        wb = load_workbook(f"attendance_{datetime.now().year}.xlsx")
+    # except FileNotFoundError:
+    #     wb = Workbook()
+    #     wb.save(f"attendance_{datetime.now().year}.xlsx")
+    #     wb = load_workbook(f"attendance_{datetime.now().year}.xlsx")
 
     #Check if the sheet for the current month exists, if not create it
-    try:
-        ws = wb[title]
-    except KeyError:
-        ws = wb.create_sheet(title, 0)
-        first_day_of_month = datetime(year, datetime.now().month, 1)
-        next_month = first_day_of_month.replace(month=first_day_of_month.month % 12 + 1, day=1)
-        num_days = (next_month - first_day_of_month).days
-        ws.cell(row=1, column=1, value="")
-        ws.cell(row=1, column=2, value="")
-        for i in range(1, 21):
-            ws.cell(row=1, column=i + 2, value=i)
+    # try:
+    #     ws = wb[title]
+    # except KeyError:
+    #     ws = wb.create_sheet(title, 0)
+    #     first_day_of_month = datetime(year, datetime.now().month, 1)
+    #     next_month = first_day_of_month.replace(month=first_day_of_month.month % 12 + 1, day=1)
+    #     num_days = (next_month - first_day_of_month).days
+    #     ws.cell(row=1, column=1, value="")
+    #     ws.cell(row=1, column=2, value="")
+    #     for i in range(1, 21):
+    #         ws.cell(row=1, column=i + 2, value=i)
 
-        for day in range(1, num_days + 1):
-            date_str = (first_day_of_month + timedelta(days=day - 1)).strftime("%d-%m-%Y")
-            ws.cell(row=day * 2, column=1, value=date_str)
-            ws.cell(row=day * 2, column=2, value="am")
-            ws.cell(row=day * 2 + 1, column=2, value="pm")
-        wb.save(f"attendance_{year}.xlsx")
+    #     for day in range(1, num_days + 1):
+    #         date_str = (first_day_of_month + timedelta(days=day - 1)).strftime("%d-%m-%Y")
+    #         ws.cell(row=day * 2, column=1, value=date_str)
+    #         ws.cell(row=day * 2, column=2, value="am")
+    #         ws.cell(row=day * 2 + 1, column=2, value="pm")
+    #     wb.save(f"attendance_{year}.xlsx")
 
 
 
@@ -222,33 +219,33 @@ def start_camera(camera_view, name_label,roll_label, main_window):
                 
                 key1 = cv2.waitKey(1)
 
-                if key1 == 13:
+                # if key1 == 13:
 
-                    for k in students_dict.keys():
-                        if students_dict[k] == name:
-                            roll_no = k
-                            break
+                #     for k in students_dict.keys():
+                #         if students_dict[k] == name:
+                #             roll_no = k
+                #             break
 
-                    for col in ws.iter_cols(min_row = 1, max_col = 1, max_row = ws.max_row):
-                        for cell in col:
-                            if cell.value == today:
-                                if datetime.now().hour < 12:
-                                    target_cell = ws.cell(row = cell.row, column = roll_no + 2)
-                                else:
-                                    target_cell = ws.cell(row = cell.row + 1, column = roll_no + 2)                                
+                #     for col in ws.iter_cols(min_row = 1, max_col = 1, max_row = ws.max_row):
+                #         for cell in col:
+                #             if cell.value == today:
+                #                 if datetime.now().hour < 12:
+                #                     target_cell = ws.cell(row = cell.row, column = roll_no + 2)
+                #                 else:
+                #                     target_cell = ws.cell(row = cell.row + 1, column = roll_no + 2)                                
 
-                                if target_cell.value is None:
-                                    target_cell.value = present_time
-                                    wb.save(f"attendance_{year}.xlsx")
-                                    print(f"Attendance marked for {name} at {present_time}")
-                                else:
-                                    print(f"Attendance already marked for {name} at {target_cell.value}")
-                                break
+                #                 if target_cell.value is None:
+                #                     target_cell.value = present_time
+                #                     wb.save(f"attendance_{year}.xlsx")
+                #                     print(f"Attendance marked for {name} at {present_time}")
+                #                 else:
+                #                     print(f"Attendance already marked for {name} at {target_cell.value}")
+                #                 break
 
-                elif key1 == ord('c') or key1 == ord('C'):
-                    continue
+                # elif key1 == ord('c') or key1 == ord('C'):
+                #     continue
 
-                elif key1 == ord('q') or key1 == ord('Q') or key1 == 27:
+                if key1 == ord('q') or key1 == ord('Q') or key1 == 27:
                     main_window.alive = False
                     break
             
@@ -285,6 +282,6 @@ def start_camera(camera_view, name_label,roll_label, main_window):
         if key == ord('q') or key == ord('Q') or key == 27:
             main_window.alive = False
 
-    stop_camera()
+    # stop_camera()
 
 # start_camera()
