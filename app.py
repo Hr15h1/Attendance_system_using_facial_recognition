@@ -40,10 +40,11 @@ except errors.ProgrammingError:
 
 def mark_attendance(label_name, roll_no):
     roll_no = roll_no.split(": ")[1]
+    label_name = label_name.text().split(": ")[1]
     mycursor = mydb.cursor()
 
     #Create a table for each month
-    query = f"CREATE TABLE IF NOT EXISTS {time.strftime('%B')}_{time.strftime('%Y')} (Attendance_ID int AUTO_INCREMENT, student_rollno int, date DATE, session ENUM('Morning', 'Afternoon'), status ENUM('Present', 'Late'), PRIMARY KEY(Attendance_ID), FOREIGN KEY(student_rollno) REFERENCES students_details(student_rollno))"
+    query = f"CREATE TABLE IF NOT EXISTS {time.strftime('%B')}_{time.strftime('%Y')} (Attendance_ID int AUTO_INCREMENT, student_rollno int, student_name varchar(50), date DATE, session ENUM('Morning', 'Afternoon'), status ENUM('Present', 'Late'), PRIMARY KEY(Attendance_ID), FOREIGN KEY(student_rollno) REFERENCES students_details(student_rollno))"
     mycursor.execute(query)
 
     #Check if the session is morning or afternoon
@@ -53,23 +54,29 @@ def mark_attendance(label_name, roll_no):
         session = "Afternoon"
 
         #Check if the attendance for the morning session is marked or not using a dialog box
-        status_morning = ctypes.windll.user32.MessageBoxW(0, "Have you marked the attendance for the morning session?", "Mark Attendance", 4)
+        status_morning = ctypes.windll.user32.MessageBoxW(0, "Were you present for the morning session?", "Mark Attendance", 4)
         if status_morning == 6:
             status = "Present"
+            morning_attendance = ctypes.windll.user32.MessageBoxW(0, "Did you mark the attendance for the morning session?", "Mark Attendance", 4)
+            if morning_attendance == 6:
+                print()
+            else:
+                sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no},'{label_name}', '{time.strftime('%Y-%m-%d')}', 'Morning', '{status}')"
+                mycursor.execute(sql)
         else:
             status = "Late"
 
             #Insert the attendance for the morning session
-            sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, date, session, status) VALUES ({roll_no}, '{time.strftime('%Y-%m-%d')}', 'Morning', '{status}')"
+            sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no},'{label_name}', '{time.strftime('%Y-%m-%d')}', 'Morning', '{status}')"
             mycursor.execute(sql)
 
     #Insert the attendance for the afternoon session
-    sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, date, session, status) VALUES ({roll_no}, '{time.strftime('%Y-%m-%d')}', '{session}', 'Present')"
-    mycursor.execute(sql)
+        sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no}, '{label_name}', '{time.strftime('%Y-%m-%d')}', '{session}', 'Present')"
+        mycursor.execute(sql)
     mydb.commit()
 
     #Display a message box to show that the attendance has been marked
-    ctypes.windll.user32.MessageBoxW(0, f"Attendance for {label_name.text()} marked successfully", "Mark Attendance", 0)
+    ctypes.windll.user32.MessageBoxW(0, f"Attendance for {label_name} marked successfully", "Mark Attendance", 0)
     return
 
 class Ui_MainWindow(object):
