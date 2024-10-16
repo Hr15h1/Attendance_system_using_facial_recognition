@@ -5,79 +5,57 @@ from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
 from PySide6.QtGui import (QFont, QKeyEvent)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
     QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel)
-import mysql.connector
-from mysql.connector import errors
-import time
-import ctypes
+# import mysql.connector
+# from mysql.connector import errors
+import csv
+import pandas as pd
+import sqlite3
+from attendance_mark import mark_attendance
 
 
+conn = sqlite3.connect("msccsai_students.db")
+
+cursor = conn.cursor()
+query = """CREATE TABLE IF NOT EXISTS students_details (id INTEGER PRIMARY KEY AUTOINCREMENT, student_name TEXT NOT NULL, student_email TEXT NOT NULL, phone_number TEXT NOT NULL, present_address TEXT NOT NULL, permanent_address TEXT NOT NULL);"""
+
+cursor.execute(query)
+
+with open("students_details.csv", "r") as file:
+    contents = csv.DictReader(file)
+    students_info = [(i['student_name'], i['student_email'], i['phone_number'], i['present_address'], i['permanent_address']) for i in contents]
+
+insert_query = "INSERT INTO students_details (student_name, student_email, phone_number, present_address, permanent_address) VALUES(?, ?, ?, ?, ?)"
+cursor.executemany(insert_query, students_info)
+conn.commit()
+conn.close()
 #Connect to existing database or create a new one and connect to it
-try:
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="admin",
-        database = "msccsai_students"
-    )
-except errors.ProgrammingError:
-    mydb = mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="admin",
-    )
-    mycursor = mydb.cursor()
-    mycursor.execute("CREATE DATABASE msccsai_students")
-    mydb.close()
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="admin",
-        database = "msccsai_students"
-    )
+# try:
+#     mydb = mysql.connector.connect(
+#         host="localhost",
+#         user="root",
+#         password="admin",
+#         database = "msccsai_students"
+
+# except 
+#     mydb = mydb = mysql.connector.connect(
+#         host="localhost",
+#         user="root",
+#         password="admin",
+#     )
+#     mycursor = mydb.cursor()
+#     mycursor.execute("CREATE DATABASE msccsai_students")
+#     mydb.close()
+#     mydb = mysql.connector.connect(
+#         host="localhost",
+#         user="root",
+#         password="admin",
+#         database = "msccsai_students"
+#     )
+
 
 
 #Function to mark attendance
 
-def mark_attendance(label_name, roll_no):
-    roll_no = roll_no.split(": ")[1]
-    label_name = label_name.text().split(": ")[1]
-    mycursor = mydb.cursor()
-
-    #Create a table for each month
-    query = f"CREATE TABLE IF NOT EXISTS {time.strftime('%B')}_{time.strftime('%Y')} (Attendance_ID int AUTO_INCREMENT, student_rollno int, student_name varchar(50), date DATE, session ENUM('Morning', 'Afternoon'), status ENUM('Present', 'Late'), PRIMARY KEY(Attendance_ID), FOREIGN KEY(student_rollno) REFERENCES students_details(student_rollno))"
-    mycursor.execute(query)
-
-    #Check if the session is morning or afternoon
-    if time.localtime().tm_hour < 12:
-        session = "Morning"
-    else:
-        session = "Afternoon"
-
-        #Check if the attendance for the morning session is marked or not using a dialog box
-        status_morning = ctypes.windll.user32.MessageBoxW(0, "Were you present for the morning session?", "Mark Attendance", 4)
-        if status_morning == 6:
-            status = "Present"
-            morning_attendance = ctypes.windll.user32.MessageBoxW(0, "Did you mark the attendance for the morning session?", "Mark Attendance", 4)
-            if morning_attendance == 6:
-                print()
-            else:
-                sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no},'{label_name}', '{time.strftime('%Y-%m-%d')}', 'Morning', '{status}')"
-                mycursor.execute(sql)
-        else:
-            status = "Late"
-
-            #Insert the attendance for the morning session
-            sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no},'{label_name}', '{time.strftime('%Y-%m-%d')}', 'Morning', '{status}')"
-            mycursor.execute(sql)
-
-    #Insert the attendance for the afternoon session
-        sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no}, '{label_name}', '{time.strftime('%Y-%m-%d')}', '{session}', 'Present')"
-        mycursor.execute(sql)
-    mydb.commit()
-
-    #Display a message box to show that the attendance has been marked
-    ctypes.windll.user32.MessageBoxW(0, f"Attendance for {label_name} marked successfully", "Mark Attendance", 0)
-    return
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
