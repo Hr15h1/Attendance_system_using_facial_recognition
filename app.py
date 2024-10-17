@@ -13,21 +13,34 @@ import sqlite3
 from attendance_mark import mark_attendance
 
 
-conn = sqlite3.connect("msccsai_students.db")
+try:
+    conn = sqlite3.connect("msccsai_students.db")
 
-cursor = conn.cursor()
-query = """CREATE TABLE IF NOT EXISTS students_details (id INTEGER PRIMARY KEY AUTOINCREMENT, student_name TEXT NOT NULL, student_email TEXT NOT NULL, phone_number TEXT NOT NULL, present_address TEXT NOT NULL, permanent_address TEXT NOT NULL);"""
+    cursor = conn.cursor()
+    query = """CREATE TABLE IF NOT EXISTS students_details (id INTEGER PRIMARY KEY AUTOINCREMENT, student_name TEXT NOT NULL, student_email TEXT NOT NULL, phone_number TEXT NOT NULL, present_address TEXT NOT NULL, permanent_address TEXT NOT NULL);"""
 
-cursor.execute(query)
+    cursor.execute(query)
+    cursor.execute("SELECT * FROM students_details")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        conn.close()
+        sys.exit(0)
+    elif count == 0:
 
-with open("students_details.csv", "r") as file:
-    contents = csv.DictReader(file)
-    students_info = [(i['student_name'], i['student_email'], i['phone_number'], i['present_address'], i['permanent_address']) for i in contents]
+        with open("students_details.csv", "r") as file:
+            contents = csv.DictReader(file)
+            students_info = [(i['student_name'], i['student_email'], i['phone_number'], i['present_address'], i['permanent_address']) for i in contents]
 
-insert_query = "INSERT INTO students_details (student_name, student_email, phone_number, present_address, permanent_address) VALUES(?, ?, ?, ?, ?)"
-cursor.executemany(insert_query, students_info)
-conn.commit()
-conn.close()
+        insert_query = "INSERT INTO students_details (student_name, student_email, phone_number, present_address, permanent_address) VALUES(?, ?, ?, ?, ?)"
+        cursor.executemany(insert_query, students_info)
+        conn.commit()
+    conn.close()
+except sqlite3.Error as e:
+    print(e)
+    if conn:
+        
+        conn.close()
+    sys.exit(1)
 #Connect to existing database or create a new one and connect to it
 # try:
 #     mydb = mysql.connector.connect(
@@ -112,8 +125,12 @@ class Ui_MainWindow(object):
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        font2 = QFont()
+        font2.setPointSize(10)
+        font2.setBold(True)
+        self.pushButton_2.setFont(font2)
         self.pushButton_2.setSizePolicy(sizePolicy2)
-        self.pushButton_2.setMinimumSize(QSize(100, 50))
+        self.pushButton_2.setMinimumSize(QSize(120, 50))
         self.pushButton_2.setStyleSheet(u"QPushButton#pushButton_2 {\n"
 "	color: rgb(255, 255, 255);\n"
 "	border-radius: 5px;\n"
@@ -258,6 +275,7 @@ class Ui_MainWindow(object):
         self.start_button.setText(QCoreApplication.translate("MainWindow", u"START", None))
         self.stop_button.setText(QCoreApplication.translate("MainWindow", u"STOP", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"MARK ATTENDANCE", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"View Attendance", None))
     # retranslateUi
 
 
