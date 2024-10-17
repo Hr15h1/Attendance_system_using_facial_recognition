@@ -2,6 +2,6 @@ attendance/
 database/*/
 attendance_2024.xlsx
 __pycache__/*/
-students_details.csv
+# students_details.csv
 msccsai_students.db
 
