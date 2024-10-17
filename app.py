@@ -5,12 +5,14 @@ from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
 from PySide6.QtGui import (QFont, QKeyEvent)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
     QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel)
+from PySide6.QtSql import QSqlDatabase
 # import mysql.connector
 # from mysql.connector import errors
 import csv
 import pandas as pd
 import sqlite3
 from attendance_mark import mark_attendance
+from attendance import viewAttendance
 
 
 try:
@@ -285,6 +287,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.start_button.clicked.connect(self.start_camera_wrapper)
         self.stop_button.clicked.connect(self.stop_camera_wrapper)  # Connect stop button
         self.pushButton.clicked.connect(lambda: mark_attendance(self.label_name, self.label_roll.text()))
+        self.pushButton_2.clicked.connect(self.view_attendance)
 
         self.cap = None  # Video capture object
         self.alive = False
@@ -305,6 +308,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scene.clear()
         if self.source is not None:
             self.source.release()
+
+
+    def view_attendance(self):
+        self.window2 = QMainWindow()
+        self.ui = viewAttendance()
+        self.ui.setupUi(self.window2)
+        self.window2.show()
 
 
     # Override the closeEvent method to release the camera

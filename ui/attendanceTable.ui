@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>612</width>
+    <height>546</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+                background-color: #2F2F2F;  /* Dark gray background */
+            }
+            
+            QWidget {
+                color: #FFFFFF;              /* White text */
+                background-color: #2F2F2F;  /* Dark gray background */
+            }
+
+            QComboBox {
+                background-color: #3E3E3E;  /* Slightly lighter gray for combo box */
+                color: #FFFFFF;              /* White text in combo box */
+                border: 1px solid #555555;   /* Gray border */
+            }
+
+            QComboBox QAbstractItemView {
+                background-color: #4D4D4D;  /* Even lighter gray for dropdown items */
+                color: #FFFFFF;              /* White text for items */
+                selection-background-color: #555555; /* Highlight selection */
+            }
+
+            QComboBox:hover {
+                border: 1px solid #888888;   /* Border color when hovered */
+            }
+
+            QPushButton {
+                background-color: #3E3E3E;  /* Button background */
+                color: #FFFFFF;              /* Button text */
+                border: 1px solid #555555;   /* Button border */
+                padding: 5px;
+            }
+
+            QPushButton:hover {
+                background-color: #4D4D4D;  /* Button hover state */
+            }
+
+            QLineEdit {
+                background-color: #4D4D4D;  /* Input field background */
+                color: #FFFFFF;              /* Input text */
+                border: 1px solid #555555;   /* Border for input fields */
+            }</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QComboBox" name="year_dropdown">
+          <property name="maximumSize">
+           <size>
+            <width>130</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QComboBox {
+    border: 2px solid #5A9;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #E6F7FF;
+	color: rgb(0, 0, 0);
+}
+
+
+QComboBox::down-arrow {
+    image: url(:down.png); /* Replace with your own image path */
+    width: 12px;  /* Adjust the width as needed */
+    height: 12px; /* Adjust the height as needed */
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid #888; /* Optional border around the dropdown */
+}
+
+
+
+QComboBox QAbstractItemView {
+    border: 1px solid #5A9;
+    background-color: #FFFFFF;
+    color: #333;
+    selection-background-color: #5A9;
+    selection-color: #FFF;
+}
+
+QComboBox:editable {
+    background: white;
+    color: black;
+}
+</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Select Year</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="month_dropdown">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>140</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QComboBox {
+    border: 2px solid #5A9;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #E6F7FF;
+	color: rgb(0, 0, 0);
+}
+
+
+QComboBox::down-arrow {
+    image: url(:down.png); /* Replace with your own image path */
+    width: 12px;  /* Adjust the width as needed */
+    height: 12px; /* Adjust the height as needed */
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid #888; /* Optional border around the dropdown */
+}
+
+
+
+QComboBox QAbstractItemView {
+    border: 1px solid #5A9;
+    background-color: #FFFFFF;
+    color: #333;
+    selection-background-color: #5A9;
+    selection-color: #FFF;
+}
+
+QComboBox:editable {
+    background: white;
+    color: black;
+}
+</string>
+          </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+          <property name="currentText">
+           <string>Select Month</string>
+          </property>
+          <property name="maxVisibleItems">
+           <number>7</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>Select Month</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>January</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>February</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>March</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>April</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>May</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>June</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>July</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>August</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>September</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>October</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>November</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>December</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+	background-color: rgb(28, 113, 216);
+    color: white;
+    border: 2px solid #388E3C;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #4CAF50;
+    border: 2px solid #2E7D32;
+}
+
+QPushButton:pressed {
+    background-color: #388E3C;
+    border: 2px solid #1B5E20;
+}
+
+QPushButton:disabled {
+    background-color: #D3D3D3;
+    color: #A0A0A0;
+    border: 2px solid #A0A0A0;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>View</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QTableWidget" name="attendance_table">
+          <property name="styleSheet">
+           <string notr="true">QTableWidget, QTableView {
+    border: 2px solid #5A9;
+    border-radius: 5px;
+    gridline-color: #888;
+    background-color: #F5F5F5;
+    selection-background-color: #5A9;
+    selection-color: #FFF;
+    font-size: 14px;
+}
+
+QHeaderView::section {
+    background-color: #5A9;
+    color: white;
+    padding: 4px;
+    border: 1px solid #CCC;
+    font-weight: bold;
+}
+
+QTableWidget::item, QTableView::item {
+    padding: 5px;
+    border: 1px solid #D3D3D3;
+}
+
+QTableWidget::item:selected, QTableView::item:selected {
+    background-color: #5A9;
+    color: white;
+}
+
+QTableCornerButton::section {
+    background-color: #5A9;
+    border: 2px solid #CCC;
+}
+
+QScrollBar:vertical {
+    background: #E6E6E6;
+    width: 12px;
+    margin: 22px 0 22px 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #888;
+    min-height: 20px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: #CCC;
+    height: 22px;
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    width: 12px;
+    height: 12px;
+    background: #666;
+}
+</string>
+          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="save_button">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+	background-color: rgb(28, 113, 216);
+    color: white;
+    border: 2px solid #388E3C;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #4CAF50;
+    border: 2px solid #2E7D32;
+}
+
+QPushButton:pressed {
+    background-color: #388E3C;
+    border: 2px solid #1B5E20;
+}
+
+QPushButton:disabled {
+    background-color: #D3D3D3;
+    color: #A0A0A0;
+    border: 2px solid #A0A0A0;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Save</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>612</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
