@@ -106,6 +106,26 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_4 = QVBoxLayout(self.frame)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.pushButton_2 = QPushButton(self.frame)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        self.pushButton_2.setSizePolicy(sizePolicy2)
+        self.pushButton_2.setMinimumSize(QSize(100, 50))
+        self.pushButton_2.setStyleSheet(u"QPushButton#pushButton_2 {\n"
+"	color: rgb(255, 255, 255);\n"
+"	border-radius: 5px;\n"
+"	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */\n"
+"	background-color: rgb(0, 117, 15);\n"
+"}\n"
+"QPushButton#pushButton_2:hover {\n"
+"	background-color: rgb(4, 219, 32);\n"
+"}\n"
+"")
+
+        self.verticalLayout_4.addWidget(self.pushButton_2, 0, Qt.AlignRight)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label_name = QLabel(self.frame)

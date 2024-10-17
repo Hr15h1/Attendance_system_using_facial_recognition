@@ -2,7 +2,6 @@ import os
 import cv2
 from deepface import DeepFace
 
-from openpyxl import Workbook, load_workbook
 
 from datetime import datetime, timedelta
 import csv
