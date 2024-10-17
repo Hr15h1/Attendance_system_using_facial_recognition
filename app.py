@@ -24,7 +24,6 @@ try:
     count = cursor.fetchone()[0]
     if count > 0:
         conn.close()
-        sys.exit(0)
     elif count == 0:
 
         with open("students_details.csv", "r") as file:
@@ -38,9 +37,7 @@ try:
 except sqlite3.Error as e:
     print(e)
     if conn:
-        
         conn.close()
-    sys.exit(1)
 #Connect to existing database or create a new one and connect to it
 # try:
 #     mydb = mysql.connector.connect(
