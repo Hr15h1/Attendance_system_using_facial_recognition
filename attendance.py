@@ -38,7 +38,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout
     QVBoxLayout, QWidget, QTableView, QMessageBox)
 from PySide6.QtSql import QSqlDatabase, QSqlTableModel
 from exportDialog import ExportDialog
-from path import EXPORT_PATH
+from paths import EXPORT_PATH
 import sqlite3
 import pandas as pd
 import calendar
@@ -442,8 +442,8 @@ class ViewAttendance(object):
     def view_attendance_table(self):
         print("Viewing attendance table")
         self.db = QSqlDatabase.addDatabase("QSQLITE")
-        # self.db.setDatabaseName("msccsai_students.db")
-        self.db.setDatabaseName("testdatabase.db") # For testing purposes
+        self.db.setDatabaseName("msccsai_students.db")
+        # self.db.setDatabaseName("testdatabase.db") # For testing purposes
         if not self.db.open():
             QMessageBox.critical(self.centralwidget, "Error", "Failed to connect to the database")
             return
