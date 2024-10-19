@@ -1,17 +1,53 @@
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+"""
+This module provides a GUI application for viewing and exporting attendance data using facial recognition.
+Classes:
+    ViewAttendance: A class to set up and manage the attendance viewing window.
+Functions:
+    setupUi(MainWindow): Sets up the user interface for the main window.
+    retranslateUi(MainWindow): Sets the text for the UI elements.
+    populate_years(): Populates the year dropdown with a range of years.
+    view_attendance_table(): Displays the attendance data in a table view.
+    save_changes(): Saves any changes made to the attendance data.
+    export_attendance(start_date, end_date): Exports the attendance data to an Excel file.
+    open_date_dialog(): Opens a dialog to select the date range for exporting attendance data.
+Attributes:
+    centralwidget (QWidget): The central widget of the main window.
+    gridLayout (QGridLayout): The main layout for the central widget.
+    verticalLayout (QVBoxLayout): A vertical layout to arrange UI elements.
+    horizontalLayout_5 (QHBoxLayout): A horizontal layout for the year and month dropdowns and view button.
+    year_dropdown (QComboBox): A dropdown to select the year.
+    month_dropdown (QComboBox): A dropdown to select the month.
+    pushButton (QPushButton): A button to view the attendance data.
+    horizontalLayout_6 (QHBoxLayout): A horizontal layout for the attendance table.
+    attendance_table (QTableView): A table view to display the attendance data.
+    horizontalLayout_4 (QHBoxLayout): A horizontal layout for the export and save buttons.
+    pushButton_2 (QPushButton): A button to export the attendance data.
+    save_button (QPushButton): A button to save changes to the attendance data.
+    menubar (QMenuBar): The menu bar of the main window.
+    statusbar (QStatusBar): The status bar of the main window.
+    db (QSqlDatabase): The database connection.
+    model (QSqlTableModel): The model for the attendance table view.
+"""
+
+
+
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
 from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
-    QHeaderView, QMainWindow, QMenuBar, QPushButton,
-    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
+    QMainWindow, QMenuBar, QPushButton,
+    QSizePolicy, QStatusBar, QDialog,
     QVBoxLayout, QWidget, QTableView, QMessageBox)
 from PySide6.QtSql import QSqlDatabase, QSqlTableModel
+from exportDialog import ExportDialog
+from path import EXPORT_PATH
+import sqlite3
+import pandas as pd
+import calendar
 
-class viewAttendance(object):
+
+
+
+
+class ViewAttendance(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"View Attendance")
@@ -281,6 +317,41 @@ class viewAttendance(object):
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.pushButton_2 = QPushButton(self.centralwidget)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        sizePolicy.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        self.pushButton_2.setSizePolicy(sizePolicy)
+        self.pushButton_2.setMinimumSize(QSize(0, 0))
+        self.pushButton_2.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgb(28, 113, 216);\n"
+"    color: white;\n"
+"    border: 2px solid #388E3C;\n"
+"    border-radius: 8px;\n"
+"    padding: 8px 16px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #4CAF50;\n"
+"    border: 2px solid #2E7D32;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #388E3C;\n"
+"    border: 2px solid #1B5E20;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color: #D3D3D3;\n"
+"    color: #A0A0A0;\n"
+"    border: 2px solid #A0A0A0;\n"
+"}\n"
+"")
+
+        self.horizontalLayout_4.addWidget(self.pushButton_2)
+        self.pushButton_2.clicked.connect(self.open_date_dialog)
         self.save_button = QPushButton(self.centralwidget)
         self.save_button.setObjectName(u"save_button")
         sizePolicy.setHeightForWidth(self.save_button.sizePolicy().hasHeightForWidth())
@@ -357,6 +428,8 @@ class viewAttendance(object):
         self.month_dropdown.setItemText(12, QCoreApplication.translate("MainWindow", u"December", None))
 
         self.month_dropdown.setCurrentText(QCoreApplication.translate("MainWindow", u"Select Month", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Export", None))
+
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"View", None))
         self.save_button.setText(QCoreApplication.translate("MainWindow", u"Save", None))
     # retranslateUi
@@ -369,7 +442,8 @@ class viewAttendance(object):
     def view_attendance_table(self):
         print("Viewing attendance table")
         self.db = QSqlDatabase.addDatabase("QSQLITE")
-        self.db.setDatabaseName("msccsai_students.db")
+        # self.db.setDatabaseName("msccsai_students.db")
+        self.db.setDatabaseName("testdatabase.db") # For testing purposes
         if not self.db.open():
             QMessageBox.critical(self.centralwidget, "Error", "Failed to connect to the database")
             return
@@ -390,12 +464,53 @@ class viewAttendance(object):
             QMessageBox.warning(self.centralwidget, "Error", "Failed to save changes")
 
 
+    def export_attendance(self, start_date, end_date):
+        sheet_added = False
+        conn = sqlite3.connect("msccsai_students.db")
+        # test_conn = sqlite3.connect("testdatabase.db") # For testing purposes
+        start_month = start_date.month()
+        end_month = end_date.month()
+        start_year = start_date.year()
+        end_year = end_date.year()
+        
+        with pd.ExcelWriter(f"{EXPORT_PATH}attendance.xlsx", engine = 'openpyxl') as writer:
+            for year in range(start_year, end_year + 1):
+                for month in range(1, 13):
+                    if (year == start_year and month < start_month) or (year == end_year and month > end_month):
+                        continue
+                    try:
+                        table_name = f"{calendar.month_name[month]}_{year}"
+                        df = pd.read_sql(f"SELECT * FROM {table_name}", conn)
+                        # df = pd.read_sql(f"SELECT * FROM {table_name}", test_conn) # For testing purposes
+                        df.to_excel(writer, sheet_name = table_name, index = False)
+                        sheet_added = True
+                    except sqlite3.OperationalError:
+                        print(f"Table {table_name} does not exist")
+            if not sheet_added:
+                QMessageBox.warning(self.centralwidget, "Error", "No data to export")
+        conn.close()
+        QMessageBox.information(self.centralwidget, "Success", "Attendance exported successfully")
+        return
+            
+
+    def open_date_dialog(self):
+        dialog = ExportDialog(self.centralwidget)
+        if dialog.exec() == QDialog.Accepted:
+            start_date, end_date = dialog.get_date()
+            # print(calendar.month_name[start_date.month()], end_date.year())
+            self.export_attendance(start_date, end_date)
+        else:
+            print("Cancelled")
+
+
+
+
 
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
     attendance_window = QMainWindow()
-    ui = viewAttendance()
+    ui = ViewAttendance()
     ui.setupUi(attendance_window)
     attendance_window.show()
     sys.exit(app.exec())

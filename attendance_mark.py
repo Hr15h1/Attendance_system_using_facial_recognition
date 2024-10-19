@@ -16,6 +16,8 @@ def mark_attendance(label_name, roll_no):
     #Check if the session is morning or afternoon
     if time.localtime().tm_hour < 12:
         session = "Morning"
+        sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no}, '{label_name}', '{time.strftime('%Y-%m-%d')}', '{session}', 'Present')"
+        mycursor.execute(sql)
     else:
         session = "Afternoon"
 
@@ -37,8 +39,7 @@ def mark_attendance(label_name, roll_no):
             mycursor.execute(sql)
 
     #Insert the attendance for the afternoon session
-        sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, date, session, status) VALUES ({roll_no}, '{label_name}', '{time.strftime('%Y-%m-%d')}', '{session}', 'Present')"
-        mycursor.execute(sql)
+    
     conn.commit()
     conn.close()
 

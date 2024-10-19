@@ -1,3 +1,22 @@
+"""
+This module implements an attendance system using facial recognition.
+Functions:
+    start_camera(camera_view, name_label, roll_label, main_window):
+        Starts the camera and performs facial recognition to mark attendance.
+Parameters:
+    camera_view (QGraphicsView): The view where the camera feed will be displayed.
+    name_label (QLabel): The label to display the recognized name.
+    roll_label (QLabel): The label to display the recognized roll number.
+    main_window (QMainWindow): The main window of the application containing the video source and control flags.
+Details:
+    - Uses OpenCV for video capture and display.
+    - Uses DeepFace for facial recognition.
+    - Reads student data from a CSV file.
+    - Displays recognized faces with bounding boxes and names.
+    - Marks attendance by updating the labels with the recognized name and roll number.
+    - Handles anti-spoofing detection.
+    - Allows quitting the camera feed by pressing 'q', 'Q', or 'Esc' key.
+"""
 import os
 import cv2
 from deepface import DeepFace
@@ -274,13 +293,6 @@ def start_camera(camera_view, name_label,roll_label, main_window):
         scene.clear()
         scene.addPixmap(pixmap)
 
-        # cv2.imshow(window_name, frame)
-        # cv2.resizeWindow(window_name, frame.shape[1], frame.shape[0])
-        # Check for key press to exit
         key = cv2.waitKey(1)
         if key == ord('q') or key == ord('Q') or key == 27:
             main_window.alive = False
-
-    # stop_camera()
-
-# start_camera()

@@ -1,18 +1,46 @@
+
+
 import sys
+"""
+This module implements an attendance system using facial recognition. It utilizes PySide6 for the GUI, OpenCV for camera operations, 
+and SQLite for database management. The application allows users to start and stop the camera, mark attendance, and view attendance records.
+Classes:
+    Ui_MainWindow: Sets up the main window UI components.
+    MainWindow: Inherits from QMainWindow and Ui_MainWindow, handles the main application logic.
+Functions:
+    setupUi(self, MainWindow): Sets up the UI components for the main window.
+    retranslateUi(self, MainWindow): Sets the text for the UI components.
+    start_camera_wrapper(self): Wrapper function to start the camera.
+    stop_camera_wrapper(self): Wrapper function to stop the camera.
+    view_attendance(self): Opens a new window to view attendance records.
+    closeEvent(self, event): Overrides the close event to release the camera.
+    keyPressEvent(self, event): Overrides the key press event to handle specific key presses.
+Attributes:
+    conn: SQLite connection object.
+    cursor: SQLite cursor object.
+    query: SQL query string to create the students_details table.
+    count: Number of records in the students_details table.
+    students_info: List of student details read from the CSV file.
+    insert_query: SQL query string to insert student details into the students_details table.
+    cap: Video capture object.
+    alive: Boolean flag to indicate if the camera is running.
+    scene: QGraphicsScene object for displaying the camera feed.
+    source: Video source for the camera.
+    s: Integer representing the camera source index.
+"""
 import cv2
 from facial_recognition_type1 import start_camera
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
 from PySide6.QtGui import (QFont, QKeyEvent)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
     QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel)
-from PySide6.QtSql import QSqlDatabase
 # import mysql.connector
 # from mysql.connector import errors
 import csv
 import pandas as pd
 import sqlite3
 from attendance_mark import mark_attendance
-from attendance import viewAttendance
+from attendance import ViewAttendance
 
 
 try:
@@ -312,7 +340,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def view_attendance(self):
         self.window2 = QMainWindow()
-        self.ui = viewAttendance()
+        self.ui = ViewAttendance()
         self.ui.setupUi(self.window2)
         self.window2.show()
 

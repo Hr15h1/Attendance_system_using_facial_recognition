@@ -366,6 +366,54 @@ QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+	background-color: rgb(28, 113, 216);
+    color: white;
+    border: 2px solid #388E3C;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #4CAF50;
+    border: 2px solid #2E7D32;
+}
+
+QPushButton:pressed {
+    background-color: #388E3C;
+    border: 2px solid #1B5E20;
+}
+
+QPushButton:disabled {
+    background-color: #D3D3D3;
+    color: #A0A0A0;
+    border: 2px solid #A0A0A0;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Export</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="save_button">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
