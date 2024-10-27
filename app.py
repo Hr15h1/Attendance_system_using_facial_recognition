@@ -40,7 +40,7 @@ import mysql.connector
 from mysql.connector import errors
 import csv
 import pandas as pd
-import sqlite3
+
 from attendance_mark import mark_attendance
 from attendance import ViewAttendance
 from constants import STUDENTS_DETAILS_CSV

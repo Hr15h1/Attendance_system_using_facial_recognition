@@ -34,17 +34,14 @@ from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, QObject
 from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
     QMainWindow, QMenuBar, QPushButton,
     QSizePolicy, QStatusBar, QDialog,
-    QVBoxLayout, QWidget, QTableView, QMessageBox, QTableWidget, QTableWidgetItem, QAbstractItemView)
-from PySide6.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlQueryModel
+    QVBoxLayout, QWidget, QMessageBox, QTableWidget, QTableWidgetItem)
+from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from exportDialog import ExportDialog
 from constants import EXPORT_PATH
 import sqlite3
 import pandas as pd
 import calendar
 import psycopg2
-import time
-import datetime
-import mysql.connector
 
 
 

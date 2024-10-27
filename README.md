@@ -60,4 +60,4 @@ This project implements an attendance management system using facial recognition
 
 - OpenCV, DeepFace for facial recognition.
 - PySide6 for the GUI framework.
-- SQLite for database management.
+- PostgreSQL for database management.

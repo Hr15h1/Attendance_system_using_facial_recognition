@@ -1,8 +1,6 @@
 
 import time
 import ctypes
-import sqlite3
-import mysql.connector
 import psycopg2
 def mark_attendance(label_name, roll_no):
     roll_no = roll_no.split(": ")[1]
