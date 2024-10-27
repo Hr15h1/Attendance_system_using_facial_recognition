@@ -70,6 +70,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string/>
+          </property>
           <property name="styleSheet">
            <string notr="true">QComboBox {
     border: 2px solid #5A9;
@@ -81,7 +84,7 @@
 
 
 QComboBox::down-arrow {
-    image: url(:down.png); /* Replace with your own image path */
+    image: url(./icons/down_arrow.png); /* Replace with your own image path */
     width: 12px;  /* Adjust the width as needed */
     height: 12px; /* Adjust the height as needed */
 }
@@ -147,11 +150,10 @@ QComboBox:editable {
 
 
 QComboBox::down-arrow {
-    image: url(:down.png); /* Replace with your own image path */
+    image: url(./icons/down_arrow.png); /* Replace with your own image path */
     width: 12px;  /* Adjust the width as needed */
     height: 12px; /* Adjust the height as needed */
 }
-
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
@@ -252,6 +254,58 @@ QComboBox:editable {
          </widget>
         </item>
         <item>
+         <widget class="QComboBox" name="day_dropdown">
+          <property name="maximumSize">
+           <size>
+            <width>120</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QComboBox {
+    border: 2px solid #5A9;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #E6F7FF;
+	color: rgb(0, 0, 0);
+}
+
+
+QComboBox::down-arrow {
+    image: url(./icons/down_arrow.png); /* Replace with your own image path */
+    width: 12px;  /* Adjust the width as needed */
+    height: 12px; /* Adjust the height as needed */
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid #888; /* Optional border around the dropdown */
+}
+
+
+
+QComboBox QAbstractItemView {
+    border: 1px solid #5A9;
+    background-color: #FFFFFF;
+    color: #333;
+    selection-background-color: #5A9;
+    selection-color: #FFF;
+}
+
+QComboBox:editable {
+    background: white;
+    color: black;
+}
+</string>
+          </property>
+          <property name="currentText">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton">
           <property name="maximumSize">
            <size>
@@ -298,7 +352,7 @@ QPushButton:disabled {
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QTableWidget" name="attendance_table">
+         <widget class="QTableWidget" name="attendance_tableWidget">
           <property name="styleSheet">
            <string notr="true">QTableWidget, QTableView {
     border: 2px solid #5A9;
@@ -353,12 +407,8 @@ QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
     width: 12px;
     height: 12px;
     background: #666;
-}
-</string>
+}</string>
           </property>
-          <attribute name="horizontalHeaderCascadingSectionResizes">
-           <bool>false</bool>
-          </attribute>
          </widget>
         </item>
        </layout>
@@ -455,23 +505,57 @@ QPushButton:disabled {
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="add_row">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>128</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+	background-color: rgb(28, 113, 216);
+    color: white;
+    border: 2px solid #388E3C;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #4CAF50;
+    border: 2px solid #2E7D32;
+}
+
+QPushButton:pressed {
+    background-color: #388E3C;
+    border: 2px solid #1B5E20;
+}
+
+QPushButton:disabled {
+    background-color: #D3D3D3;
+    color: #A0A0A0;
+    border: 2px solid #A0A0A0;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Add new row</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>612</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

@@ -30,24 +30,26 @@ Attributes:
 """
 
 
-
-from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, QObject, Qt)
 from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
     QMainWindow, QMenuBar, QPushButton,
     QSizePolicy, QStatusBar, QDialog,
-    QVBoxLayout, QWidget, QTableView, QMessageBox)
-from PySide6.QtSql import QSqlDatabase, QSqlTableModel
+    QVBoxLayout, QWidget, QTableView, QMessageBox, QTableWidget, QTableWidgetItem, QAbstractItemView)
+from PySide6.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlQueryModel
 from exportDialog import ExportDialog
-from paths import EXPORT_PATH
+from constants import EXPORT_PATH
 import sqlite3
 import pandas as pd
 import calendar
+import psycopg2
+import time
+import datetime
+import mysql.connector
 
 
 
 
-
-class ViewAttendance(object):
+class ViewAttendance(QObject):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"View Attendance")
@@ -116,7 +118,7 @@ class ViewAttendance(object):
 "\n"
 "\n"
 "QComboBox::down-arrow {\n"
-"    image: url(:down.png); /* Replace with your own image path */\n"
+"    image: url(./icons/down_arrow.png); /* Replace with your own image path */\n"
 "    width: 12px;  /* Adjust the width as needed */\n"
 "    height: 12px; /* Adjust the height as needed */\n"
 "}\n"
@@ -178,7 +180,7 @@ class ViewAttendance(object):
 "\n"
 "\n"
 "QComboBox::down-arrow {\n"
-"    image: url(:down.png); /* Replace with your own image path */\n"
+"    image: url(./icons/down_arrow.png); /* Replace with your own image path */\n"
 "    width: 12px;  /* Adjust the width as needed */\n"
 "    height: 12px; /* Adjust the height as needed */\n"
 "}\n"
@@ -209,6 +211,48 @@ class ViewAttendance(object):
         self.month_dropdown.setMaxVisibleItems(7)
 
         self.horizontalLayout_5.addWidget(self.month_dropdown)
+        self.day_dropdown = QComboBox(self.centralwidget)
+        self.day_dropdown.setObjectName(u"day_dropdown")
+        self.day_dropdown.setMaximumSize(QSize(120, 16777215))
+        self.day_dropdown.setStyleSheet(u"QComboBox {\n"
+"    border: 2px solid #5A9;\n"
+"    border-radius: 5px;\n"
+"    padding: 5px;\n"
+"    background-color: #E6F7FF;\n"
+"	color: rgb(0, 0, 0);\n"
+"}\n"
+"\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"    image: url(./icons/down_arrow.png); /* Replace with your own image path */\n"
+"    width: 12px;  /* Adjust the width as needed */\n"
+"    height: 12px; /* Adjust the height as needed */\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 20px;\n"
+"    border-left: 1px solid #888; /* Optional border around the dropdown */\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    border: 1px solid #5A9;\n"
+"    background-color: #FFFFFF;\n"
+"    color: #333;\n"
+"    selection-background-color: #5A9;\n"
+"    selection-color: #FFF;\n"
+"}\n"
+"\n"
+"QComboBox:editable {\n"
+"    background: white;\n"
+"    color: black;\n"
+"}\n"
+"")
+
+        self.horizontalLayout_5.addWidget(self.day_dropdown)
 
         self.pushButton = QPushButton(self.centralwidget)
         self.pushButton.setObjectName(u"pushButton")
@@ -249,13 +293,13 @@ class ViewAttendance(object):
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.attendance_table = QTableView(self.centralwidget)
-        self.attendance_table.setObjectName(u"attendance_table")
-        self.attendance_table.setStyleSheet(u"QTableWidget, QTableView {\n"
+        self.attendance_tableWidget = QTableWidget(self.centralwidget)
+        self.attendance_tableWidget.setObjectName(u"attendance_tableWidget")
+        self.attendance_tableWidget.setStyleSheet(u"QTableWidget, QTableView {\n"
 "    border: 2px solid #5A9;\n"
+"    color: black;\n"
 "    border-radius: 5px;\n"
 "    gridline-color: #888;\n"
-"    color: black;\n"
 "    background-color: #F5F5F5;\n"
 "    selection-background-color: #5A9;\n"
 "    selection-color: #FFF;\n"
@@ -306,11 +350,9 @@ class ViewAttendance(object):
 "    width: 12px;\n"
 "    height: 12px;\n"
 "    background: #666;\n"
-"}\n"
-"")
-        self.attendance_table.horizontalHeader().setCascadingSectionResizes(False)
+"}")
 
-        self.horizontalLayout_6.addWidget(self.attendance_table)
+        self.horizontalLayout_6.addWidget(self.attendance_tableWidget)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_6)
@@ -352,42 +394,6 @@ class ViewAttendance(object):
 
         self.horizontalLayout_4.addWidget(self.pushButton_2)
         self.pushButton_2.clicked.connect(self.open_date_dialog)
-        self.save_button = QPushButton(self.centralwidget)
-        self.save_button.setObjectName(u"save_button")
-        sizePolicy.setHeightForWidth(self.save_button.sizePolicy().hasHeightForWidth())
-        self.save_button.setSizePolicy(sizePolicy)
-        self.save_button.clicked.connect(self.save_changes)
-        self.save_button.setStyleSheet(u"QPushButton {\n"
-"	background-color: rgb(28, 113, 216);\n"
-"    color: white;\n"
-"    border: 2px solid #388E3C;\n"
-"    border-radius: 8px;\n"
-"    padding: 8px 16px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    text-align: center;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #4CAF50;\n"
-"    border: 2px solid #2E7D32;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #388E3C;\n"
-"    border: 2px solid #1B5E20;\n"
-"}\n"
-"\n"
-"QPushButton:disabled {\n"
-"    background-color: #D3D3D3;\n"
-"    color: #A0A0A0;\n"
-"    border: 2px solid #A0A0A0;\n"
-"}\n"
-"")
-
-        self.horizontalLayout_4.addWidget(self.save_button)
-
-
         self.verticalLayout.addLayout(self.horizontalLayout_4)
 
 
@@ -406,13 +412,16 @@ class ViewAttendance(object):
 
         QMetaObject.connectSlotsByName(MainWindow)
         self.populate_years()  # Populate the years in the combo box
+        self.populate_days()  # Populate the days in the combo box
+        self.day_dropdown.insertItem(0, "Select Day")
+        self.day_dropdown.setCurrentIndex(0)
 
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.year_dropdown.setItemText(0, QCoreApplication.translate("MainWindow", u"Select Year", None))
-
+        self.day_dropdown.setItemText(0, QCoreApplication.translate("MainWindow", u"Select Day", None))
         self.month_dropdown.setItemText(0, QCoreApplication.translate("MainWindow", u"Select Month", None))
         self.month_dropdown.setItemText(1, QCoreApplication.translate("MainWindow", u"January", None))
         self.month_dropdown.setItemText(2, QCoreApplication.translate("MainWindow", u"February", None))
@@ -429,9 +438,7 @@ class ViewAttendance(object):
 
         self.month_dropdown.setCurrentText(QCoreApplication.translate("MainWindow", u"Select Month", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Export", None))
-
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"View", None))
-        self.save_button.setText(QCoreApplication.translate("MainWindow", u"Save", None))
     # retranslateUi
 
     def populate_years(self):
@@ -439,47 +446,110 @@ class ViewAttendance(object):
         years = [str(year) for year in range(current_year - 20, current_year + 3)]  # Last 50 years
         self.year_dropdown.addItems(years)  # Populate the combo box
 
+    def populate_days(self):
+        days = [str(day) for day in range(1, 32)]
+        self.day_dropdown.addItems(days)
+
+
     def view_attendance_table(self):
-        print("Viewing attendance table")
-        self.db = QSqlDatabase.addDatabase("QSQLITE")
-        self.db.setDatabaseName("msccsai_students.db")
-        # self.db.setDatabaseName("testdatabase.db") # For testing purposes
+        if QSqlDatabase.contains("qt_sql_default_connection"):
+            QSqlDatabase.removeDatabase("qt_sql_default_connection")
+        
+        self.db = QSqlDatabase.addDatabase("QPSQL")
+        self.db.setHostName("localhost")
+        self.db.setDatabaseName("msccsai_students")
+        self.db.setUserName("postgres")
+        self.db.setPassword("admin")
         if not self.db.open():
             QMessageBox.critical(self.centralwidget, "Error", "Failed to connect to the database")
             return
+        
+        # query = QSqlQuery(self.db)
         year = self.year_dropdown.currentText()
         month = self.month_dropdown.currentText()
+        day = self.day_dropdown.currentText()
+        self.table_name = f"{month}_{year}"
         if year == "Select Year" or month == "Select Month":
             return
-        self.db.open()
-        self.model = QSqlTableModel()
-        self.model.setTable(f"{month}_{year}")
-        self.model.select()
-        self.attendance_table.setModel(self.model)
-
-    def save_changes(self):
-        if self.model.submitAll():
-            QMessageBox.information(self.centralwidget, "Success", "Changes saved successfully")
+        if day == "Select Day":
+            query = f"SELECT * FROM {self.table_name}"
         else:
-            QMessageBox.warning(self.centralwidget, "Error", "Failed to save changes")
+            date = f"{year}-{month}-{day}"
+            query = f"SELECT * FROM {self.table_name} WHERE Date = '{date}'"
 
+
+        self.model = QSqlQueryModel()
+        self.model.setQuery(query, self.db)
+
+
+
+        self.attendance_tableWidget.setRowCount(self.model.rowCount())
+        self.attendance_tableWidget.setColumnCount(self.model.columnCount())
+        self.attendance_tableWidget.setHorizontalHeaderLabels([self.model.headerData(i, Qt.Horizontal) for i in range(self.model.columnCount())])
+
+        for row in range(self.model.rowCount()):
+            for column in range(self.model.columnCount()):
+                item = QTableWidgetItem(str(self.model.data(self.model.index(row, column))))
+                self.attendance_tableWidget.setItem(row, column, item)
+
+
+        self.attendance_tableWidget.setEditTriggers(QTableWidget.EditTrigger.DoubleClicked)
+
+        self.attendance_tableWidget.cellChanged.connect(self.table_changes)
+
+        return
+        
+
+    def table_changes(self, row, column):
+        new_value = self.attendance_tableWidget.item(row, column).text()
+        column_name = self.model.headerData(column, Qt.Horizontal)
+        primary_key_value = self.attendance_tableWidget.item(row, 0).text()
+
+        
+        query = QSqlQuery(self.db)
+        query.prepare(f"UPDATE {self.table_name} SET {column_name} = :new_value WHERE attendance_id = :primary_key_value")
+        query.bindValue(":new_value", new_value)
+        query.bindValue(":primary_key_value", primary_key_value)
+
+        if not query.exec():
+            QMessageBox.warning(self.centralwidget, "Error", "Failed to update the database")
+        else:
+            QMessageBox.information(self.centralwidget, "Success", "Changes saved successfully")
+        
+        return
 
     def export_attendance(self, start_date, end_date):
         sheet_added = False
-        conn = sqlite3.connect("msccsai_students.db")
+        conn = psycopg2.connect(
+            user = 'postgres',
+            password = 'admin',
+            host = 'localhost',
+            database = 'msccsai_students'
+        )
         # test_conn = sqlite3.connect("testdatabase.db") # For testing purposes
         start_month = start_date.month()
         end_month = end_date.month()
         start_year = start_date.year()
         end_year = end_date.year()
-        
+        print(f"start_month: {start_month}, end_month: {end_month}, start_year: {start_year}, end_year: {end_year}")
+
         with pd.ExcelWriter(f"{EXPORT_PATH}attendance.xlsx", engine = 'openpyxl') as writer:
             for year in range(start_year, end_year + 1):
                 for month in range(1, 13):
                     if (year == start_year and month < start_month) or (year == end_year and month > end_month):
                         continue
                     try:
-                        table_name = f"{calendar.month_name[month]}_{year}"
+                        table_name = f"{calendar.month_name[month].lower()}_{year}"
+
+                        cursor = conn.cursor()
+                        cursor.execute(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table_name}')")
+                        table_exists = cursor.fetchone()[0]
+
+                        if not table_exists:
+                            print(f"Table {table_name} does not exist")
+                            continue
+
+
                         df = pd.read_sql(f"SELECT * FROM {table_name}", conn)
                         # df = pd.read_sql(f"SELECT * FROM {table_name}", test_conn) # For testing purposes
                         df.to_excel(writer, sheet_name = table_name, index = False)

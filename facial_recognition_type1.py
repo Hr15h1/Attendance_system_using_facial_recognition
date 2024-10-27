@@ -29,6 +29,7 @@ import logging
 
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QGraphicsScene
+from attendance_mark import mark_attendance
 
 logging.getLogger('tensorflow').disabled = True
 
@@ -108,8 +109,7 @@ def start_camera(camera_view, name_label,roll_label, main_window):
 
 
 
-
-    
+    frame_displayed = False
     # start_time = time.time()
     while main_window.alive:
         has_frame, frame = source.read()
@@ -132,6 +132,10 @@ def start_camera(camera_view, name_label,roll_label, main_window):
         #     frame = cv2.flip(frame, 1)
 
         #     resized_frame = cv2.resize(frame, (640, 480))
+
+        if not frame_displayed:
+            main_window.countdown(8)
+            frame_displayed = True
 
         try:
             # Perform face recognition by passing each frame to the models
@@ -210,6 +214,7 @@ def start_camera(camera_view, name_label,roll_label, main_window):
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
                 cv2.rectangle(frame, (xmin, ymin - 25), (xmax, ymin),(255, 255, 255), -1)
                 cv2.putText(frame, name, (xmin, ymin), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0),2, cv2.LINE_AA)
+                    
 
 
                 print(f"Name: {name}")
@@ -225,6 +230,8 @@ def start_camera(camera_view, name_label,roll_label, main_window):
                 roll_label.setText(f"Roll No: {roll_no}")
 
 
+
+
                 height, width, _ = frame.shape
                 bytes_per_line = 3 * width
                 q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
@@ -232,7 +239,7 @@ def start_camera(camera_view, name_label,roll_label, main_window):
                 pixmap = QPixmap.fromImage(q_img)
                 scene.clear()
                 scene.addPixmap(pixmap)
-
+                                
                 
                 
                 key1 = cv2.waitKey(1)
@@ -291,7 +298,7 @@ def start_camera(camera_view, name_label,roll_label, main_window):
 
         pixmap = QPixmap.fromImage(q_img)
         scene.clear()
-        scene.addPixmap(pixmap)
+        scene.addPixmap(pixmap)        
 
         key = cv2.waitKey(1)
         if key == ord('q') or key == ord('Q') or key == 27:

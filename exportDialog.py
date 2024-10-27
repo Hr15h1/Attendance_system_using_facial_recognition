@@ -1,12 +1,11 @@
-from PySide6.QtCore import (QCoreApplication, QDate,
-    QMetaObject, QRect, Qt)
-from PySide6.QtWidgets import (QComboBox, QDialog,
-    QDialogButtonBox, QFrame, QLabel, QLayout,
-    QSizePolicy, QVBoxLayout, QWidget)
-
-from PySide6.QtCore import (QCoreApplication, QDate,
-    QMetaObject, QRect, Qt)
-from PySide6.QtWidgets import (QComboBox, QDialog,
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
     QDialogButtonBox, QFrame, QHBoxLayout, QLabel,
     QLayout, QSizePolicy, QVBoxLayout, QWidget)
 
@@ -44,7 +43,7 @@ class ExportDialog(QDialog):
 "\n"
 "\n"
 "QComboBox::down-arrow {\n"
-"    image: url(:down.png);\n"
+"    image: url(./icons/down_arrow.png);\n"
 "    width: 12px; \n"
 "    height: 12px;\n"
 "}\n"
@@ -95,16 +94,15 @@ class ExportDialog(QDialog):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.comboBox = QComboBox(self.verticalLayoutWidget_2)
-        self.comboBox.setObjectName(u"comboBox")
+        self.year_dropdown1 = QComboBox(self.verticalLayoutWidget_2)
+        self.year_dropdown1.setObjectName(u"year_dropdown1")
 
-        self.horizontalLayout.addWidget(self.comboBox)
+        self.horizontalLayout.addWidget(self.year_dropdown1)
 
-        self.comboBox_2 = QComboBox(self.verticalLayoutWidget_2)
-        self.comboBox_2.setObjectName(u"comboBox_2")
+        self.month_dropdown1 = QComboBox(self.verticalLayoutWidget_2)
+        self.month_dropdown1.setObjectName(u"month_dropdown1")
 
-        self.horizontalLayout.addWidget(self.comboBox_2)
-
+        self.horizontalLayout.addWidget(self.month_dropdown1)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
@@ -117,16 +115,15 @@ class ExportDialog(QDialog):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.comboBox_3 = QComboBox(self.verticalLayoutWidget_2)
-        self.comboBox_3.setObjectName(u"comboBox_3")
+        self.year_dropdown2 = QComboBox(self.verticalLayoutWidget_2)
+        self.year_dropdown2.setObjectName(u"year_dropdown2")
 
-        self.horizontalLayout_2.addWidget(self.comboBox_3)
+        self.horizontalLayout_2.addWidget(self.year_dropdown2)
 
-        self.comboBox_4 = QComboBox(self.verticalLayoutWidget_2)
-        self.comboBox_4.setObjectName(u"comboBox_4")
+        self.month_dropdown2 = QComboBox(self.verticalLayoutWidget_2)
+        self.month_dropdown2.setObjectName(u"month_dropdown2")
 
-        self.horizontalLayout_2.addWidget(self.comboBox_4)
-
+        self.horizontalLayout_2.addWidget(self.month_dropdown2)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
@@ -174,27 +171,43 @@ class ExportDialog(QDialog):
     # setupUi
 
     def retranslateUi(self, Dialog):
-
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Select start date:", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Select end date:", None))
     # retranslateUi
 
-    
+
     def populate_years(self):
         current_year = 2024
         years = [str(year) for year in range(current_year - 20, current_year + 3)]  # Last 50 years
-        self.comboBox_2.addItems(years)
-        self.comboBox_4.addItems(years)
+        self.year_dropdown1.addItems(years)
+        self.year_dropdown2.addItems(years)
+        self.year_dropdown1.insertItem(0, "Year")
+        self.year_dropdown2.insertItem(0, "Year")
+        self.year_dropdown1.setCurrentIndex(0)
+        self.year_dropdown2.setCurrentIndex(0)
+
+    def populate_days(self):
+        days = [str(day) for day in range(1, 32)]
+        self.day_dropdown1.addItems(days)
+        self.day_dropdown2.addItems(days)
+        self.day_dropdown1.insertItem(0, "Day")
+        self.day_dropdown2.insertItem(0, "Day")
+        self.day_dropdown1.setCurrentIndex(0)
+        self.day_dropdown2.setCurrentIndex(0)
 
     def populate_months(self):
         months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-        self.comboBox.addItems(months)
-        self.comboBox_3.addItems(months)
+        self.month_dropdown2.addItems(months)
+        self.month_dropdown1.addItems(months)
+        self.month_dropdown2.insertItem(0, "Month")
+        self.month_dropdown1.insertItem(0, "Month")
+        self.month_dropdown2.setCurrentIndex(0)
+        self.month_dropdown1.setCurrentIndex(0)
 
     def get_date(self):
-        start_date = QDate(int(self.comboBox_2.currentText()), self.comboBox.currentIndex() + 1, 1)
-        end_date = QDate(int(self.comboBox_4.currentText()), self.comboBox_3.currentIndex() + 1, 1)
+        start_date = QDate(int(self.year_dropdown1.currentText()), self.month_dropdown1.currentIndex(), 1)
+        end_date = QDate(int(self.year_dropdown2.currentText()), self.month_dropdown2.currentIndex(), 1)
         return start_date, end_date
 
     

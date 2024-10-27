@@ -41,7 +41,7 @@
 
 
 QComboBox::down-arrow {
-    image: url(:down.png);
+    image: url(./icons/down_arrow.png);
     width: 12px; 
     height: 12px;
 }
@@ -110,10 +110,13 @@ QLabel {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="year_dropdown1"/>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_2"/>
+           <widget class="QComboBox" name="month_dropdown1"/>
+          </item>
+          <item>
+           <widget class="QComboBox" name="day_dropdown1"/>
           </item>
          </layout>
         </item>
@@ -133,10 +136,13 @@ QLabel {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QComboBox" name="comboBox_3"/>
+           <widget class="QComboBox" name="year_dropdown2"/>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_4"/>
+           <widget class="QComboBox" name="month_dropdown2"/>
+          </item>
+          <item>
+           <widget class="QComboBox" name="day_dropdown2"/>
           </item>
          </layout>
         </item>
