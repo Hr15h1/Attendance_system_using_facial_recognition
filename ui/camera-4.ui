@@ -27,39 +27,87 @@
     <item row="0" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QGraphicsView" name="camera_view">
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>104</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton#pushButton_4 {
+	color: rgb(255, 255, 255);
+	border-radius: 5px;
+	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */
+	background-color: rgb(255, 94, 94);
+	
+	font: 700 12pt &quot;Segoe UI&quot;;
+}
+QPushButton#pushButton_4:hover {
+	background-color: rgb(4, 219, 32);
+}</string>
+          </property>
+          <property name="text">
+           <string>Edit Config</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGraphicsView" name="camera_view">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>640</width>
+            <height>480</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>640</width>
+            <height>480</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border-color: rgb(255, 255, 255);
+border: 2px solid rgb(255, 255, 255);
+background-color: rgb(154, 153, 150);</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>640</width>
-          <height>480</height>
+          <width>386</width>
+          <height>594</height>
          </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>640</width>
-          <height>480</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border-color: rgb(255, 255, 255);
-border: 2px solid rgb(255, 255, 255);
-background-color: rgb(154, 153, 150);</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
         </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(36, 31, 49);</string>
@@ -99,6 +147,43 @@ QPushButton#pushButton_2:hover {
            </property>
            <property name="text">
             <string>View</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignRight">
+          <widget class="QPushButton" name="pushButton_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton#pushButton_3 {
+	color: rgb(255, 255, 255);
+	border-radius: 5px;
+	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */
+	background-color: rgb(255, 145, 135);
+	
+	font: 900 9pt &quot;Segoe UI&quot;;
+}
+QPushButton#pushButton_3:hover {
+	background-color: rgb(255, 103, 103)
+}
+
+QPushButton#pushButton_3:pressed {
+	background-color: rgb(255, 32, 32)
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Add Student</string>
            </property>
           </widget>
          </item>
@@ -308,6 +393,33 @@ QPushButton#pushButton:hover {
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1075</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(179, 165, 206);
+font: 700 10pt &quot;Segoe UI&quot;;
+
+QMenuBar::right-arrow{
+	image: url(./icons/material-symbols--menu.png);
+}</string>
+   </property>
+   <widget class="QMenu" name="menuEdit_Config">
+    <property name="title">
+     <string>Edit Config</string>
+    </property>
+   </widget>
+   <addaction name="menuEdit_Config"/>
   </widget>
  </widget>
  <resources/>

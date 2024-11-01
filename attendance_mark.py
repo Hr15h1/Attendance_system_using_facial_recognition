@@ -17,6 +17,16 @@ def mark_attendance(label_name, roll_no):
     query = f"CREATE TABLE IF NOT EXISTS {time.strftime('%B')}_{time.strftime('%Y')} (attendance_ID SERIAL, student_rollno int, student_name varchar(100), time varchar(10), date varchar(11), morning varchar(10), afternoon varchar(10), FOREIGN KEY(student_rollno) REFERENCES students_details(id), PRIMARY KEY(attendance_ID, student_rollno));"
     mycursor.execute(query)
 
+    result_query = f"SELECT * FROM {time.strftime('%B')}_{time.strftime('%Y')} WHERE student_rollno = {roll_no} AND date = '{time.strftime('%Y-%m-%d')}'"
+
+    mycursor.execute(result_query)
+
+    #Check if the attendance for the student is already marked or not
+    if mycursor.rowcount > 0:
+        #If the attendance is already marked, display a message box to show that the attendance is already marked
+        ctypes.windll.user32.MessageBoxW(0, f"Attendance for {label_name} already marked", "Mark Attendance", 0)
+        return
+
     #Check if the session is morning or afternoon
     if time.localtime().tm_hour < 12:
         sql = f"INSERT INTO {time.strftime('%B')}_{time.strftime('%Y')} (student_rollno, student_name, time, date, morning, afternoon) VALUES ({roll_no}, '{label_name}', '{time.strftime('%H:%M:%S')}', '{time.strftime('%Y-%m-%d')}', 'Present', 'Null')"

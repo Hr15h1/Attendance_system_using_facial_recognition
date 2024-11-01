@@ -51,7 +51,7 @@ This project implements an attendance management system using facial recognition
 
 ## Database
 
-- The system uses an SQLite database.
+- The system uses a PostgreSQL database.
 - The student details can be stored as a csv file, which must then be added to the paths.py.
 - Attendance records are stored in monthly tables named `<Month>_<Year>`.
 

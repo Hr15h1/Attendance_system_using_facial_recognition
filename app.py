@@ -29,74 +29,53 @@ Attributes:
 import pathlib
 import sys
 import cv2
-import time
 import datetime
 from facial_recognition_type1 import start_camera
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt, QTimer)
 from PySide6.QtGui import (QFont, QKeyEvent)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
     QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel, QLayout, QLCDNumber)
-import mysql.connector
-from mysql.connector import errors
+from config_dialog import ConfigurationDialog
 import csv
-import pandas as pd
-
+import ctypes
 from attendance_mark import mark_attendance
+from config_loader import load_config
 from attendance import ViewAttendance
-from constants import STUDENTS_DETAILS_CSV
+from student_registration import AddStudent
 import psycopg2
 
+config = load_config()
 
-# try:
-#     conn = sqlite3.connect("msccsai_students.db")
-
-#     cursor = conn.cursor()
-#     query = """CREATE TABLE IF NOT EXISTS students_details (id INTEGER PRIMARY KEY AUTOINCREMENT, student_name TEXT NOT NULL, student_email TEXT NOT NULL, phone_number TEXT NOT NULL, present_address TEXT NOT NULL, permanent_address TEXT NOT NULL);"""
-
-#     cursor.execute(query)
-#     cursor.execute("SELECT COUNT(*) FROM students_details")
-#     count = cursor.fetchone()[0]
-#     if count > 0:
-#         conn.close()
-#     elif count == 0:
-
-#         with open("students_details.csv", "r") as file:
-#             contents = csv.DictReader(file)
-#             students_info = [(i['student_name'], i['student_email'], i['phone_number'], i['present_address'], i['permanent_address']) for i in contents]
-
-#         insert_query = "INSERT INTO students_details (student_name, student_email, phone_number, present_address, permanent_address) VALUES(?, ?, ?, ?, ?)"
-#         cursor.executemany(insert_query, students_info)
-#         conn.commit()
-#     conn.close()
-# except sqlite3.Error as e:
-#     print(e)
-#     if conn:
-#         conn.close()
 # Connect to existing database or create a new one and connect to it
 try:
+    # Create a new database if it does not exist
     mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="admin",
-        port="5432"
+        host=config.DB_HOST,
+        user=config.DB_USER,
+        password=config.DB_PASSWORD,
+        port=config.DB_PORT
     )
+    # Enable autocommit to create the database
     mydb.autocommit = True
     mycursor = mydb.cursor()
+    # Check if the database exists
     mycursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'msccsai_students'")
     result = mycursor.fetchone()
+    # Create the database if it does not exist
     if not result:
         mycursor.execute("CREATE DATABASE msccsai_students")
     mycursor.close()
     mydb.close()
-
+    # Connect to the created database
     mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="admin",
-        database="msccsai_students",
-        port="5432"
+        host=config.DB_HOST,
+        user=config.DB_USER,
+        password=config.DB_PASSWORD,
+        database=config.DB_NAME,
+        port=config.DB_PORT
     )
     mycursor = mydb.cursor()
+    # Create the students_details table if it does not exist
     create_table = 'CREATE TABLE IF NOT EXISTS students_details (id SERIAL PRIMARY KEY, student_name VARCHAR(100), student_email VARCHAR(100), phone_number VARCHAR(12), present_address VARCHAR(255), permanent_address VARCHAR(255));'
     mycursor.execute(create_table)
     count = "SELECT COUNT(*) FROM students_details"
@@ -105,20 +84,28 @@ try:
     if result[0] > 0:
         mydb.close()
     elif result[0] == 0 or result is None:
-
-        csv_path = pathlib.Path.cwd() / STUDENTS_DETAILS_CSV
-        dict_list = []
-        with csv_path.open("r") as f:
-            file_reader = csv.reader(f)
-            for rows in file_reader:
-                dict_list.append({'student_name': rows[0], 'student_email': rows[1], 'phone_number': rows[2], 'present_address': rows[3], 'permanent_address': rows[4]})
-
-        for item in dict_list:
-            insert_values = 'INSERT INTO students_details(student_name, student_email, phone_number, present_address, permanent_address) VALUES (%s, %s, %s, %s, %s);'
-            val = item['student_name'], item['student_email'], item['phone_number'], item['present_address'], item['permanent_address']
-            mycursor.execute(insert_values, val)
-        mydb.commit()
-except mysql.connector.Error as e:
+        # Insert student details from the CSV file into the students_details table
+        csv_path = pathlib.Path.cwd() / config.STUDENTS_DETAILS_CSV
+        if csv_path.stat().st_size == 0:
+            print("CSV file is empty")
+            ctypes.windll.user32.MessageBoxW(0, "The CSV file is empty or does not exist. You can add student details through the application.", "CSV File Empty", 0)
+        else:
+            dict_list = []
+            with csv_path.open("r") as f:
+                file_reader = csv.reader(f)
+                for rows in file_reader:
+                    dict_list.append({'student_name': rows[0], 'student_email': rows[1], 'phone_number': rows[2], 'present_address': rows[3], 'permanent_address': rows[4]})
+            if not dict_list:
+                ctypes.windll.user32.MessageBoxW(0, "The CSV file is empty or does not exist. You can add student details through the application.", "CSV File Empty", 0)
+                
+            else:
+                for item in dict_list:
+                    insert_values = 'INSERT INTO students_details(student_name, student_email, phone_number, present_address, permanent_address) VALUES (%s, %s, %s, %s, %s);'
+                    val = item['student_name'], item['student_email'], item['phone_number'], item['present_address'], item['permanent_address']
+                    mycursor.execute(insert_values, val)
+                mydb.commit()
+                ctypes.windll.user32.MessageBoxW(0, "The student details from the csv file has been added successfully", "Student Details Added", 0)
+except psycopg2.Error as e:
     print(e)
 finally:
     if mydb.closed:
@@ -129,7 +116,7 @@ finally:
 
 #Function to mark attendance
 
-
+#Main window UI setup
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -147,11 +134,34 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.camera_view = QGraphicsView(self.centralwidget)
-        self.camera_view.setObjectName(u"camera_view")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.verticalLayout_8 = QVBoxLayout()
+        self.verticalLayout_8.setSpacing(0)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.verticalLayout_8.setContentsMargins(0, -1, 5, -1)
+        self.pushButton_4 = QPushButton(self.centralwidget)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.pushButton_4.sizePolicy().hasHeightForWidth())
+        self.pushButton_4.setSizePolicy(sizePolicy1)
+        self.pushButton_4.setMinimumSize(QSize(104, 40))
+        self.pushButton_4.setStyleSheet(u"QPushButton#pushButton_4 {\n"
+"	color: rgb(255, 255, 255);\n"
+"	border-radius: 5px;\n"
+"	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */\n"
+"	background-color: rgb(255, 94, 94);\n"
+"	\n"
+"	font: 700 12pt \"Segoe UI\";\n"
+"}\n"
+"QPushButton#pushButton_4:hover {\n"
+"	background-color: rgb(4, 219, 32);\n"
+"}")
+
+        self.verticalLayout_8.addWidget(self.pushButton_4)
+
+        self.camera_view = QGraphicsView(self.centralwidget)
+        self.camera_view.setObjectName(u"camera_view")
         sizePolicy1.setHeightForWidth(self.camera_view.sizePolicy().hasHeightForWidth())
         self.camera_view.setSizePolicy(sizePolicy1)
         self.camera_view.setMinimumSize(QSize(640, 480))
@@ -160,12 +170,16 @@ class Ui_MainWindow(object):
 "border: 2px solid rgb(255, 255, 255);\n"
 "background-color: rgb(154, 153, 150);")
 
-        self.horizontalLayout.addWidget(self.camera_view)
+        self.verticalLayout_8.addWidget(self.camera_view)
+
+
+        self.horizontalLayout.addLayout(self.verticalLayout_8)
 
         self.frame = QFrame(self.centralwidget)
         self.frame.setObjectName(u"frame")
         sizePolicy1.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy1)
+        self.frame.setMinimumSize(QSize(386, 594))
         self.frame.setStyleSheet(u"background-color: rgb(36, 31, 49);")
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
@@ -173,17 +187,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.pushButton_2 = QPushButton(self.frame)
         self.pushButton_2.setObjectName(u"pushButton_2")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
-        self.pushButton_2.setSizePolicy(sizePolicy2)
-        self.pushButton_2.setMinimumSize(QSize(115, 50))
+        sizePolicy1.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        self.pushButton_2.setSizePolicy(sizePolicy1)
+        self.pushButton_2.setMinimumSize(QSize(100, 50))
         self.pushButton_2.setStyleSheet(u"QPushButton#pushButton_2 {\n"
 "	color: rgb(255, 255, 255);\n"
 "	border-radius: 5px;\n"
 "	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */\n"
-"	font-weight: bold;\n"
 "	background-color: rgb(0, 117, 15);\n"
 "}\n"
 "QPushButton#pushButton_2:hover {\n"
@@ -193,15 +203,39 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.pushButton_2, 0, Qt.AlignRight)
 
+        self.pushButton_3 = QPushButton(self.frame)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        sizePolicy1.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
+        self.pushButton_3.setSizePolicy(sizePolicy1)
+        self.pushButton_3.setMinimumSize(QSize(100, 50))
+        self.pushButton_3.setStyleSheet(u"QPushButton#pushButton_3 {\n"
+"	color: rgb(255, 255, 255);\n"
+"	border-radius: 5px;\n"
+"	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */\n"
+"	background-color: rgb(255, 145, 135);\n"
+"	\n"
+"	font: 900 9pt \"Segoe UI\";\n"
+"}\n"
+"QPushButton#pushButton_3:hover {\n"
+"	background-color: rgb(255, 103, 103)\n"
+"}\n"
+"\n"
+"QPushButton#pushButton_3:pressed {\n"
+"	background-color: rgb(255, 32, 32)\n"
+"}\n"
+"")
+
+        self.verticalLayout_4.addWidget(self.pushButton_3, 0, Qt.AlignRight)
+
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label_name = QLabel(self.frame)
         self.label_name.setObjectName(u"label_name")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.label_name.sizePolicy().hasHeightForWidth())
-        self.label_name.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.label_name.sizePolicy().hasHeightForWidth())
+        self.label_name.setSizePolicy(sizePolicy2)
         self.label_name.setMinimumSize(QSize(0, 0))
         self.label_name.setMaximumSize(QSize(16777215, 50))
         font = QFont()
@@ -217,8 +251,8 @@ class Ui_MainWindow(object):
 
         self.label_roll = QLabel(self.frame)
         self.label_roll.setObjectName(u"label_roll")
-        sizePolicy3.setHeightForWidth(self.label_roll.sizePolicy().hasHeightForWidth())
-        self.label_roll.setSizePolicy(sizePolicy3)
+        sizePolicy2.setHeightForWidth(self.label_roll.sizePolicy().hasHeightForWidth())
+        self.label_roll.setSizePolicy(sizePolicy2)
         self.label_roll.setMinimumSize(QSize(0, 0))
         self.label_roll.setMaximumSize(QSize(16777215, 50))
         self.label_roll.setFont(font)
@@ -239,15 +273,16 @@ class Ui_MainWindow(object):
         self.lcdNumber = QLCDNumber(self.frame)
         self.lcdNumber.setObjectName(u"lcdNumber")
         self.lcdNumber.setEnabled(True)
-        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.lcdNumber.sizePolicy().hasHeightForWidth())
-        self.lcdNumber.setSizePolicy(sizePolicy4)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.lcdNumber.sizePolicy().hasHeightForWidth())
+        self.lcdNumber.setSizePolicy(sizePolicy3)
         self.lcdNumber.setMinimumSize(QSize(0, 0))
         self.lcdNumber.setMaximumSize(QSize(387, 86))
         font1 = QFont()
-        font1.setFamilies([u"Segoe UI Variable Display"])
+        font1.setFamilies([u"Courier New"])
+        font1.setBold(True)
         self.lcdNumber.setFont(font1)
         self.lcdNumber.setLayoutDirection(Qt.LeftToRight)
         self.lcdNumber.setAutoFillBackground(False)
@@ -272,11 +307,11 @@ class Ui_MainWindow(object):
 
         self.pushButton = QPushButton(self.frame)
         self.pushButton.setObjectName(u"pushButton")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy5)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy4)
         self.pushButton.setMinimumSize(QSize(150, 50))
         self.pushButton.setMaximumSize(QSize(150, 50))
         font2 = QFont()
@@ -310,7 +345,12 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
-    # setupUi
+
+
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
@@ -318,6 +358,8 @@ class Ui_MainWindow(object):
         self.label_roll.setText(QCoreApplication.translate("MainWindow", u"Roll No", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"MARK ATTENDANCE", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"View Attendance", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Add student", None))
+        self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"Edit Config", None))
     # retranslateUi
 
 
@@ -333,13 +375,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scene = QGraphicsScene()
         self.camera_view.setScene(self.scene)
         self.source = None
-        self.s = 1
+        self.s = config.CAMERA_ID
         self.attendance_marked = False
         self.setFocusPolicy(Qt.StrongFocus)
 
         self.pushButton.clicked.connect(self.start_camera_wrapper)
         self.pushButton_2.clicked.connect(self.view_attendance)
-    # Wrapper functions for starting and stopping the camera
+        self.pushButton_3.clicked.connect(self.add_student)
+        self.pushButton_4.clicked.connect(self.open_config_dialog)
+
+        # Wrapper functions for starting and stopping the camera
 
     def countdown(self, s):
  
@@ -367,7 +412,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def start_camera_wrapper(self):
         self.alive = True
         self.source = cv2.VideoCapture(self.s)
-        start_camera(self.camera_view, self.label_name,self.label_roll, self)
+        start_camera(self.camera_view, self, "mark_attendance", self.label_name ,self.label_roll)
         self.attendance_marked = False
 
 
@@ -385,6 +430,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ui.setupUi(self.window2)
         self.window2.show()
 
+    def add_student(self):
+        self.window3 = QMainWindow()
+        self.ui = AddStudent()
+        self.ui.setupUi(self.window3)
+        self.window3.show()
+
 
     # Override the closeEvent method to release the camera
 
@@ -399,16 +450,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
             self.close()
-        
-        # elif event.key() in (Qt.Key_Enter, Qt.Key_Return):
-        #     mark_attendance(self.label_name, self.label_roll.text())
-
-
-
         else:
             super().keyPressEvent(event)
 
 
+    def open_config_dialog(self):
+        print("open config function called.")
+        self.dialog1 = ConfigurationDialog(self.centralwidget)
+        self.dialog1.exec()
 
 
 

@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1886</width>
+    <height>816</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(61, 56, 70);
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1886</width>
+      <height>811</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QGraphicsView" name="graphicsView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>1280</width>
+           <height>720</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>1280</width>
+           <height>720</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-color: rgb(255, 255, 255);
+border: 2px solid rgb(255, 255, 255);
+background-color: rgb(154, 153, 150);
+border-radius: 7px;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>190</width>
+             <height>42</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>190</width>
+             <height>42</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton#pushButton {
+	color: rgb(255, 255, 255);
+	border-radius: 5px;
+	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */
+	background-color: rgb(26, 95, 180);  /* Set your background color */
+}
+
+QPushButton#pushButton:hover {
+	background-color: rgb(38, 134, 252);
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Save details and take photo</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox">
+           <property name="maximumSize">
+            <size>
+             <width>70</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QSpinBox {
+    background-color: #f0f0f0; /* Light grey background */
+    color: #333333; /* Dark text */
+    border: 1px solid #a6a6a6; /* Grey border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 3px;
+}
+
+QSpinBox::up-button {
+	border-top-right-radius: 5px;
+    subcontrol-origin: border;
+    subcontrol-position: top right; /* Position the up button */
+    width: 15px;
+    border-left: 1px solid #a6a6a6;
+    background-color: #e1e1e1;
+}
+
+QSpinBox::down-button {
+	border-bottom-right-radius: 5px;
+    subcontrol-origin: border;
+    subcontrol-position: bottom right; /* Position the down button */
+    width: 15px;
+    border-left: 1px solid #a6a6a6;
+    background-color: #e1e1e1;
+}
+
+QSpinBox::up-arrow {
+    image: url(./icons/up_arrow.png);
+    width: 7px;
+    height: 7px;
+}
+
+QSpinBox::down-arrow  {
+    image: url(./icons/down_arrow.png);
+    width: 7px;
+    height: 7px;
+}
+</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>164</width>
+             <height>42</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>164</width>
+             <height>42</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton#pushButton_2 {
+	color: rgb(255, 255, 255);
+	border-radius: 5px;
+	border: 1px solid rgb(0, 0, 0);  /* Optional: Adds a border */
+	background-color: rgb(0, 117, 15);
+}
+QPushButton#pushButton_2:hover {
+	background-color: rgb(4, 219, 32);
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Save photos and details</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item alignment="Qt::AlignTop">
+        <widget class="QWidget" name="widget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>797</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>77</width>
+           <height>78</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-radius: 10px;
+background-color: rgb(36, 31, 49);
+
+
+
+</string>
+         </property>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>217</x>
+            <y>10</y>
+            <width>150</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: white;
+font: 900 15pt &quot;Segoe UI Black&quot;;
+</string>
+          </property>
+          <property name="text">
+           <string>Student Details</string>
+          </property>
+         </widget>
+         <widget class="QWidget" name="verticalLayoutWidget_3">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>40</y>
+            <width>561</width>
+            <height>751</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="formLayout">
+           <item>
+            <layout class="QHBoxLayout" name="row_1">
+             <item>
+              <layout class="QVBoxLayout" name="cell_1">
+               <property name="spacing">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+                 </property>
+                 <property name="text">
+                  <string>Register Number</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>274</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Register Number</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="cell_2">
+               <property name="spacing">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+                 </property>
+                 <property name="text">
+                  <string>Roll Number</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_3">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>274</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Roll No</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="row_2">
+             <item>
+              <layout class="QVBoxLayout" name="cell_3">
+               <property name="spacing">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+                 </property>
+                 <property name="text">
+                  <string>Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>274</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Name</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="cell_4">
+               <property name="spacing">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+                 </property>
+                 <property name="text">
+                  <string>Phone Number</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_5">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>274</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Phone Number</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="row_3">
+             <item>
+              <layout class="QVBoxLayout" name="cell_5">
+               <property name="spacing">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+                 </property>
+                 <property name="text">
+                  <string>Present Address</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_6">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>274</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Present Address</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="cell_6">
+               <property name="spacing">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+                 </property>
+                 <property name="text">
+                  <string>Permanent Address</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_7">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>274</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Permanent Address</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="cell_8">
+             <property name="spacing">
+              <number>20</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_10">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">font: 900 14pt &quot;Segoe UI Black&quot;;
+color: rgb(255, 255, 255)</string>
+               </property>
+               <property name="text">
+                <string>Email</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_9">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>317</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 0, 0);
+text-align: center;
+background-color: rgb(255, 255, 255);
+border-radius: 10px;
+font: 12pt &quot;Segoe UI&quot;;
+</string>
+               </property>
+               <property name="placeholderText">
+                <string>Email</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

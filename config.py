@@ -1,0 +1,9 @@
+EXPORT_PATH = "C:/Users/jyoth/OneDrive/Desktop/ai students attendance/"
+PHOTO_DATABASE = "database"
+STUDENTS_DETAILS_CSV = "students_details.csv"
+CAMERA_ID = 1
+DB_NAME = "msccsai_students"
+DB_USER = "postgres"
+DB_PASSWORD = "admin"
+DB_HOST = "localhost"
+DB_PORT = "5432"

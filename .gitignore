@@ -1,15 +1,9 @@
 attendance/
 database/*/
 attendance_2024.xlsx
-__pycache__/*/
+__pycache__
 # students_details.csv
 msccsai_students.db
 
 attendance.xlsx
-__pycache__/attendance_mark.cpython-310.pyc
-__pycache__/attendance.cpython-310.pyc
-__pycache__/constants.cpython-310.pyc
-__pycache__/exportDialog.cpython-310.pyc
-__pycache__/facial_recognition_type1.cpython-310.pyc
-__pycache__/paths.cpython-310.pyc
 test1.py

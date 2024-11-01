@@ -31,22 +31,26 @@ Attributes:
 
 
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, QObject, Qt)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
-    QMainWindow, QMenuBar, QPushButton,
+from PySide6.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout,
+    QMenuBar, QPushButton,
     QSizePolicy, QStatusBar, QDialog,
     QVBoxLayout, QWidget, QMessageBox, QTableWidget, QTableWidgetItem)
 from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from exportDialog import ExportDialog
-from constants import EXPORT_PATH
+
+from config_loader import load_config
 import sqlite3
 import pandas as pd
 import calendar
 import psycopg2
 
 
+config = load_config()
 
 
 class ViewAttendance(QObject):
+
+    
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"View Attendance")
@@ -412,6 +416,9 @@ class ViewAttendance(QObject):
         self.populate_days()  # Populate the days in the combo box
         self.day_dropdown.insertItem(0, "Select Day")
         self.day_dropdown.setCurrentIndex(0)
+        self.attendance_tableWidget.setEditTriggers(QTableWidget.EditTrigger.DoubleClicked)
+        
+        self.attendance_tableWidget.cellChanged.connect(self.table_changes)
 
     # setupUi
 
@@ -449,6 +456,7 @@ class ViewAttendance(QObject):
 
 
     def view_attendance_table(self):
+        self.attendance_tableWidget.blockSignals(True)
         if QSqlDatabase.contains("qt_sql_default_connection"):
             QSqlDatabase.removeDatabase("qt_sql_default_connection")
         
@@ -490,9 +498,9 @@ class ViewAttendance(QObject):
                 self.attendance_tableWidget.setItem(row, column, item)
 
 
-        self.attendance_tableWidget.setEditTriggers(QTableWidget.EditTrigger.DoubleClicked)
+        
+        self.attendance_tableWidget.blockSignals(False)
 
-        self.attendance_tableWidget.cellChanged.connect(self.table_changes)
 
         return
         
@@ -513,24 +521,24 @@ class ViewAttendance(QObject):
         else:
             QMessageBox.information(self.centralwidget, "Success", "Changes saved successfully")
         
+        
         return
 
     def export_attendance(self, start_date, end_date):
         sheet_added = False
         conn = psycopg2.connect(
-            user = 'postgres',
-            password = 'admin',
-            host = 'localhost',
-            database = 'msccsai_students'
+            host=config.DB_HOST,
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            database = config.DB_NAME
         )
         # test_conn = sqlite3.connect("testdatabase.db") # For testing purposes
         start_month = start_date.month()
         end_month = end_date.month()
         start_year = start_date.year()
         end_year = end_date.year()
-        print(f"start_month: {start_month}, end_month: {end_month}, start_year: {start_year}, end_year: {end_year}")
 
-        with pd.ExcelWriter(f"{EXPORT_PATH}attendance.xlsx", engine = 'openpyxl') as writer:
+        with pd.ExcelWriter(f"{config.EXPORT_PATH}attendance.xlsx", engine = 'openpyxl') as writer:
             for year in range(start_year, end_year + 1):
                 for month in range(1, 13):
                     if (year == start_year and month < start_month) or (year == end_year and month > end_month):
@@ -543,7 +551,7 @@ class ViewAttendance(QObject):
                         table_exists = cursor.fetchone()[0]
 
                         if not table_exists:
-                            print(f"Table {table_name} does not exist")
+                            QMessageBox.warning(self.centralwidget, "Error", f"Table {table_name} does not exist")
                             continue
 
 
@@ -552,7 +560,7 @@ class ViewAttendance(QObject):
                         df.to_excel(writer, sheet_name = table_name, index = False)
                         sheet_added = True
                     except sqlite3.OperationalError:
-                        print(f"Table {table_name} does not exist")
+                        QMessageBox.warning(self.centralwidget, "Error", f"Table {table_name} does not exist")
             if not sheet_added:
                 QMessageBox.warning(self.centralwidget, "Error", "No data to export")
         conn.close()
@@ -573,11 +581,11 @@ class ViewAttendance(QObject):
 
 
 
-if __name__ == "__main__":
-    import sys
-    app = QApplication(sys.argv)
-    attendance_window = QMainWindow()
-    ui = ViewAttendance()
-    ui.setupUi(attendance_window)
-    attendance_window.show()
-    sys.exit(app.exec())
+# if __name__ == "__main__":
+#     import sys
+#     app = QApplication(sys.argv)
+#     attendance_window = QMainWindow()
+#     ui = ViewAttendance()
+#     ui.setupUi(attendance_window)
+#     attendance_window.show()
+#     sys.exit(app.exec())
