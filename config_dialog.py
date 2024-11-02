@@ -251,9 +251,6 @@ class ConfigurationDialog(QDialog):
         self.label_9.setText(QCoreApplication.translate("Dialog", u"Path for exporting attendance", None))
         self.label_10.setText(QCoreApplication.translate("Dialog", u"Path to photos directory", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"Save", None))
-    # retranslateUi
-
-    def show_config_values(self):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Configuration", None))
 #if QT_CONFIG(tooltip)
@@ -287,6 +284,10 @@ class ConfigurationDialog(QDialog):
 #endif // QT_CONFIG(tooltip)
         self.label_10.setText(QCoreApplication.translate("Dialog", u"Path to photos directory", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"Save", None))
+    # retranslateUi
+
+    def show_config_values(self):
+        
         self.lineEdit.setText(config.DB_NAME)
         self.lineEdit_2.setText(config.DB_USER)
         self.lineEdit_3.setText(config.DB_PASSWORD)
