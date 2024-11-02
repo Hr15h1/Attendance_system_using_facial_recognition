@@ -43,6 +43,7 @@ import sqlite3
 import pandas as pd
 import calendar
 import psycopg2
+import datetime
 
 
 config = load_config()
@@ -472,6 +473,7 @@ class ViewAttendance(QObject):
         # query = QSqlQuery(self.db)
         year = self.year_dropdown.currentText()
         month = self.month_dropdown.currentText()
+        month_num = datetime.datetime.strptime(month, "%B").month
         day = self.day_dropdown.currentText()
         self.table_name = f"{month}_{year}"
         if year == "Select Year" or month == "Select Month":
@@ -479,7 +481,7 @@ class ViewAttendance(QObject):
         if day == "Select Day":
             query = f"SELECT * FROM {self.table_name}"
         else:
-            date = f"{year}-{month}-{day}"
+            date = f"{year}-{month_num}-{day}"
             query = f"SELECT * FROM {self.table_name} WHERE Date = '{date}'"
 
 
@@ -555,7 +557,7 @@ class ViewAttendance(QObject):
                             continue
 
 
-                        df = pd.read_sql(f"SELECT * FROM {table_name}", conn)
+                        df = pd.read_sql(f"SELECT attendance_id, student_rollno, student_name, date, morning, afternoon FROM {table_name}", conn)
                         # df = pd.read_sql(f"SELECT * FROM {table_name}", test_conn) # For testing purposes
                         df.to_excel(writer, sheet_name = table_name, index = False)
                         sheet_added = True

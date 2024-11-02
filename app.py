@@ -59,11 +59,11 @@ try:
     mydb.autocommit = True
     mycursor = mydb.cursor()
     # Check if the database exists
-    mycursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'msccsai_students'")
+    mycursor.execute(f"SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{config.DB_NAME}'")
     result = mycursor.fetchone()
     # Create the database if it does not exist
     if not result:
-        mycursor.execute("CREATE DATABASE msccsai_students")
+        mycursor.execute(f"CREATE DATABASE {config.DB_NAME}")
     mycursor.close()
     mydb.close()
     # Connect to the created database

@@ -121,6 +121,9 @@ color: rgb(255, 255, 255)</string>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You could enter the name of an existing database, or we could create a new on for you according to the name you give us, inside your database management system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Name of Database</string>
        </property>
@@ -133,6 +136,9 @@ color: rgb(255, 255, 255)</string>
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You have to enter the username to your database management system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Username</string>
@@ -163,6 +169,9 @@ color: rgb(255, 255, 255)</string>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You have to enter the password to your database management system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Password</string>
        </property>
@@ -192,6 +201,9 @@ color: rgb(255, 255, 255)</string>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the host name that you have used when you first installed  the database management system. By default it will be 'localhost'.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Database host</string>
        </property>
@@ -220,6 +232,9 @@ color: rgb(255, 255, 255)</string>
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the port that was selected for you when the database management system was first installed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Database port</string>
@@ -260,6 +275,9 @@ color: rgb(255, 255, 255)</string>
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_7">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the camera that you want to use. If your device has only one, it will default to that one but if your device is connected with multiple cameras, the first one will be selected by default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Select Camera</string>
        </property>
@@ -267,6 +285,9 @@ color: rgb(255, 255, 255)</string>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_8">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you plan to enter the details of your students without using the application, specify the path to that CSV file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Path to students details csv</string>
        </property>
@@ -290,6 +311,9 @@ color: rgb(255, 255, 255)</string>
      </item>
      <item row="7" column="0">
       <widget class="QLabel" name="label_9">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type out the path to the folder you want to export the excel file. You could also create a folder at the required location and the copy its path and paste it here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Path for exporting attendance</string>
        </property>
@@ -309,10 +333,16 @@ color: rgb(255, 255, 255)</string>
          <height>25</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string/>
+       </property>
       </widget>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="label_10">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify the path to photos directory which the facial recognition model will use. Note: The photos directory must contain folders named after each student and must contain only that particular student's photos.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Path to photos directory</string>
        </property>
