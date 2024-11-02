@@ -81,7 +81,7 @@ def start_camera(camera_view, main_window, purpose, name_label = None, roll_labe
                 #refresh_database = False so that the model may work without the photos in the database
                 #silent = True to suppress the warnings
                 #To add more photos, add them to the database folder and set refresh_database = True
-                result1 = DeepFace.find(frame, db_path = f"./{config.PHOTO_DATABASE}", enforce_detection = False, model_name = "Dlib", detector_backend = "dlib", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)
+                result1 = DeepFace.find(frame, db_path = f"./{config.PHOTO_DATABASE}", enforce_detection = False, model_name = "Dlib", detector_backend = "dlib", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = True, silent = True)
                 # result2 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
                 # result3 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "ArcFace", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
                 # result4 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "GhostFaceNet", detector_backend = "opencv", align = False, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
