@@ -197,19 +197,6 @@ class ConfigurationDialog(QDialog):
 
         self.formLayout.setWidget(7, QFormLayout.FieldRole, self.lineEdit_8)
 
-        self.label_10 = QLabel(self.formLayoutWidget)
-        self.label_10.setObjectName(u"label_10")
-
-        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.label_10)
-
-        self.lineEdit_9 = QLineEdit(self.formLayoutWidget)
-        self.lineEdit_9.setObjectName(u"lineEdit_9")
-        sizePolicy.setHeightForWidth(self.lineEdit_9.sizePolicy().hasHeightForWidth())
-        self.lineEdit_9.setSizePolicy(sizePolicy)
-        self.lineEdit_9.setMinimumSize(QSize(300, 25))
-
-        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.lineEdit_9)
-
         self.comboBox = QComboBox(self.formLayoutWidget)
         self.comboBox.setObjectName(u"comboBox")
         self.comboBox.setStyleSheet(u"")
@@ -236,6 +223,7 @@ class ConfigurationDialog(QDialog):
         self.retranslateUi(Dialog)
 
         QMetaObject.connectSlotsByName(Dialog)
+        self.pushButton.clicked.connect(self.save_config_values)
     # setupUi
 
     def retranslateUi(self, Dialog):
@@ -249,7 +237,6 @@ class ConfigurationDialog(QDialog):
         self.label_7.setText(QCoreApplication.translate("Dialog", u"Select Camera", None))
         self.label_8.setText(QCoreApplication.translate("Dialog", u"Path to students details csv", None))
         self.label_9.setText(QCoreApplication.translate("Dialog", u"Path for exporting attendance", None))
-        self.label_10.setText(QCoreApplication.translate("Dialog", u"Path to photos directory", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"Save", None))
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Configuration", None))
@@ -276,15 +263,7 @@ class ConfigurationDialog(QDialog):
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.label_9.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Type out the path to the folder you want to export the excel file. You could also create a folder at the required location and the copy its path and paste it here.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.label_10.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Specify the path to photos directory which the facial recognition model will use. Note: The photos directory must contain folders named after each student and must contain only that particular student's photos.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_10.setText(QCoreApplication.translate("Dialog", u"Path to photos directory", None))
-        self.pushButton.setText(QCoreApplication.translate("Dialog", u"Save", None))
-    # retranslateUi
+
 
     def show_config_values(self):
         
@@ -295,7 +274,6 @@ class ConfigurationDialog(QDialog):
         self.lineEdit_5.setText(config.DB_PORT)
         self.lineEdit_7.setText(config.STUDENTS_DETAILS_CSV)
         self.lineEdit_8.setText(config.EXPORT_PATH)
-        self.lineEdit_9.setText(config.PHOTO_DATABASE)
 
     def load_device_list(self):
         for camera in cameras:
@@ -312,7 +290,6 @@ class ConfigurationDialog(QDialog):
         config.DB_PORT = self.lineEdit_5.text()
         config.STUDENTS_DETAILS_CSV = self.lineEdit_7.text()
         config.EXPORT_PATH = self.lineEdit_8.text()
-        config.PHOTO_DATABASE = self.lineEdit_9.text()
         config.CAMERA_ID = self.comboBox.currentIndex()
 
         try: 
@@ -324,7 +301,6 @@ class ConfigurationDialog(QDialog):
                 file.write(f"DB_PORT = \"{config.DB_PORT}\"\n")
                 file.write(f"STUDENTS_DETAILS_CSV = \"{config.STUDENTS_DETAILS_CSV}\"\n")
                 file.write(f"EXPORT_PATH = \"{config.EXPORT_PATH}\"\n")
-                file.write(f"PHOTO_DATABASE = \"{config.PHOTO_DATABASE}\"\n")
                 file.write(f"CAMERA_ID = {config.CAMERA_ID}\n")
             QMessageBox.information(self, "Success", "Configuration saved successfully. Please restart the application for changes to take effect.")
         except Exception as e:

@@ -155,7 +155,7 @@ class Ui_MainWindow(object):
 "	font: 700 12pt \"Segoe UI\";\n"
 "}\n"
 "QPushButton#pushButton_4:hover {\n"
-"	background-color: rgb(4, 219, 32);\n"
+"	background-color: rgb(255, 46, 46);\n"
 "}")
 
         self.verticalLayout_8.addWidget(self.pushButton_4)
