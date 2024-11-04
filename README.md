@@ -23,7 +23,7 @@ This project implements an attendance management system using facial recognition
     (recommended python version 3.10.11)
     ```sh
     python -m venv attendance
-    source attendance/Scripts/activate  # On Windows
+    ./attendance/Scripts/activate  # On Windows
     # source attendance/bin/activate    # On Unix or MacOS
     ```
 
