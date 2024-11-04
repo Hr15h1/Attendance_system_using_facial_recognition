@@ -474,7 +474,7 @@ class ViewAttendance(QObject):
         year = self.year_dropdown.currentText()
         month = self.month_dropdown.currentText()
         month_num = datetime.datetime.strptime(month, "%B").month
-        day = self.day_dropdown.currentText()
+        day = str(self.day_dropdown.currentText()).zfill(2)
         self.table_name = f"{month}_{year}"
         if year == "Select Year" or month == "Select Month":
             return
@@ -482,7 +482,7 @@ class ViewAttendance(QObject):
             query = f"SELECT * FROM {self.table_name}"
         else:
             date = f"{year}-{month_num}-{day}"
-            query = f"SELECT * FROM {self.table_name} WHERE Date = '{date}'"
+            query = f"SELECT * FROM {self.table_name} WHERE date = '{date}'"
 
 
         self.model = QSqlQueryModel()
