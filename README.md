@@ -10,6 +10,17 @@ This project implements an attendance management system using facial recognition
 - **CSV Integration**: Imports student details from CSV files.
 - **Monthly Attendance Tables**: Creates separate tables for each month to store attendance records.
 
+## Note
+
+There are two branches created in this repository. There are some differences in the GUI of the application in the two branches.
+In the main branch:
+  - The application has two buttons for starting and stopping the camera and another button for marking the attendance.
+  - The application uses an SQLITE database.
+
+In branch_1:
+  - The application has only a single button to mark attendance. The camera will switch on and then turn of after 10 seconds, in between the attendance will be marked.
+  - The application has a configuration window, which can be used to edit the export paths, database, camera, etc.
+
 
 ## Installation
 
