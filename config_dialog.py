@@ -267,11 +267,11 @@ class ConfigurationDialog(QDialog):
 
     def show_config_values(self):
         
-        self.lineEdit.setText(config.DB_NAME)
-        self.lineEdit_2.setText(config.DB_USER)
-        self.lineEdit_3.setText(config.DB_PASSWORD)
-        self.lineEdit_4.setText(config.DB_HOST)
-        self.lineEdit_5.setText(config.DB_PORT)
+        self.lineEdit.setText(config.DB_USER)
+        self.lineEdit_2.setText(config.DB_PASSWORD)
+        self.lineEdit_3.setText(config.DB_HOST)
+        self.lineEdit_4.setText(config.DB_PORT)
+        self.lineEdit_5.setText(config.DB_NAME)
         self.lineEdit_7.setText(config.STUDENTS_DETAILS_CSV)
         self.lineEdit_8.setText(config.EXPORT_PATH)
 
