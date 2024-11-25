@@ -21,16 +21,12 @@ import os
 import cv2
 from deepface import DeepFace
 
-
 from datetime import datetime
 import csv
-import logging
 
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QGraphicsScene
-from attendance_mark import mark_attendance
 
-logging.getLogger('tensorflow').disabled = True
 from config_loader import load_config
 
 year = datetime.now().year
@@ -75,16 +71,15 @@ def start_camera(camera_view, main_window, purpose, name_label = None, roll_labe
             frame = cv2.flip(frame, 1)
 
             if not frame_displayed:
-                main_window.countdown(8)
                 frame_displayed = True
-            
+
             try:
                 # Perform face recognition by passing each frame to the models
                 #refresh_database = False so that the model may work without the photos in the database
                 #silent = True to suppress the warnings
                 #To add more photos, add them to the database folder and set refresh_database = True
                 result1 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "Dlib", detector_backend = "dlib", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = True, silent = False)
-                # result2 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
+                # result1 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "VGG-Face", detector_backend = "ssd", align = False, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = True, silent = False)
                 # result3 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "ArcFace", detector_backend = "yunet", align = True, distance_metric = "euclidean_l2", anti_spoofing = True, refresh_database = False, silent = True)
                 # result4 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "GhostFaceNet", detector_backend = "opencv", align = False, distance_metric = "cosine", anti_spoofing = True, refresh_database = False, silent = True)
                 # result5 = DeepFace.find(frame, db_path = "./database", enforce_detection = False, model_name = "SFace", detector_backend = "ssd", align = True, distance_metric = "euclidean", anti_spoofing = True, refresh_database = False, silent = True)

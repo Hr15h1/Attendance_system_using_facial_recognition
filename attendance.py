@@ -39,7 +39,6 @@ from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from exportDialog import ExportDialog
 
 from config_loader import load_config
-import sqlite3
 import pandas as pd
 import calendar
 import psycopg2
@@ -561,7 +560,7 @@ class ViewAttendance(QObject):
                         # df = pd.read_sql(f"SELECT * FROM {table_name}", test_conn) # For testing purposes
                         df.to_excel(writer, sheet_name = table_name, index = False)
                         sheet_added = True
-                    except sqlite3.OperationalError:
+                    except Exception as e:
                         QMessageBox.warning(self.centralwidget, "Error", f"Table {table_name} does not exist")
             if not sheet_added:
                 QMessageBox.warning(self.centralwidget, "Error", "No data to export")

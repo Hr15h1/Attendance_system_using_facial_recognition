@@ -25,14 +25,13 @@ Attributes:
     source: Video source for the camera.
     s: Integer representing the camera source index.
 """
-
+import threading
 import pathlib
 import sys
 import cv2
 import datetime
-from facial_recognition_type1 import start_camera
-from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt, QTimer)
-from PySide6.QtGui import (QFont, QKeyEvent)
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt, QTimer, QThread)
+from PySide6.QtGui import (QFont, QKeyEvent, QPixmap, QImage)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
     QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel, QLayout, QLCDNumber)
 from config_dialog import ConfigurationDialog
@@ -43,8 +42,21 @@ from config_loader import load_config
 from attendance import ViewAttendance
 from student_registration import AddStudent
 import psycopg2
+from deepface import DeepFace
+from start_model import StartModel
+from start_camera import CameraWorker
+
 
 config = load_config()
+
+
+try:
+    from ctypes import windll
+    myappid = 'dcskumscai.attendance.attendance_system.1.0.0'
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+except ImportError:
+    pass
+
 
 # Connect to existing database or create a new one and connect to it
 try:
@@ -105,14 +117,11 @@ try:
                     mycursor.execute(insert_values, val)
                 mydb.commit()
                 ctypes.windll.user32.MessageBoxW(0, "The student details from the csv file has been added successfully", "Student Details Added", 0)
+
+    mydb.close()
+    
 except psycopg2.Error as e:
     print(e)
-finally:
-    if mydb.closed:
-        print("Connection closed")
-    else:
-        mydb.close()
-        print("Connection closed")
 
 #Function to mark attendance
 
@@ -373,18 +382,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cap = None  # Video capture object
         self.alive = False
         self.scene = QGraphicsScene()
-        self.camera_view.setScene(self.scene)
         self.source = None
         self.s = config.CAMERA_ID
         self.attendance_marked = False
         self.setFocusPolicy(Qt.StrongFocus)
 
+        self.camera_frame = cv2.imread("camera_cover.png")
+        self.height, self.width, img_channel = self.camera_frame.shape
+        bytes_per_line = 3 * self.width
+        self.q_image = QImage(self.camera_frame.data, self.width, self.height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+        self.pixmap = QPixmap.fromImage(self.q_image)
+        self.scene.addPixmap(self.pixmap)
+
+        self.camera_view.setScene(self.scene)
+
         self.pushButton.clicked.connect(self.start_camera_wrapper)
         self.pushButton_2.clicked.connect(self.view_attendance)
         self.pushButton_3.clicked.connect(self.add_student)
         self.pushButton_4.clicked.connect(self.open_config_dialog)
+        self.start_model_thread()
 
-        # Wrapper functions for starting and stopping the camera
 
     def countdown(self, s):
  
@@ -403,25 +420,71 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.lcdNumber.display("0")
             if not self.attendance_marked:
 
-                mark_attendance(self.label_name, self.label_roll.text())
+                mark_attendance(self.label_name.text(), self.label_roll.text())
                 self.attendance_marked = True
             self.total_seconds = 0
             self.stop_camera_wrapper()
 
 
+
     def start_camera_wrapper(self):
-        self.alive = True
-        self.source = cv2.VideoCapture(self.s)
-        start_camera(self.camera_view, self, "mark_attendance", self.label_name ,self.label_roll)
+        self.camera_worker = CameraWorker(self.s)
+        self.camera_thread = QThread()
+        self.camera_worker.moveToThread(self.camera_thread)
+        self.camera_thread.started.connect(self.camera_worker.start_camera)
+        self.camera_worker.finished.connect(self.camera_thread.quit)
+        self.camera_worker.finished.connect(self.camera_thread.deleteLater)
+        self.camera_thread.finished.connect(self.camera_thread.deleteLater)
+        self.camera_worker.frame_captured.connect(self.update_camera_frame)
+        self.camera_thread.start()
+        self.countdown(10)
         self.attendance_marked = False
 
 
     def stop_camera_wrapper(self):
-        self.alive = False  # Set the flag to False to stop the camera
+        self.camera_worker.stop_camera()
         self.scene.clear()
         self.camera_view.setScene(self.scene)
         if self.source is not None:
             self.source.release()
+        self.camera_frame = cv2.imread("camera_cover.png")
+        self.height, self.width, img_channel = self.camera_frame.shape
+        bytes_per_line = img_channel * self.width
+        self.q_image = QImage(self.camera_frame.data, self.width, self.height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+        self.pixmap = QPixmap.fromImage(self.q_image)   
+        self.scene.addPixmap(self.pixmap)
+        self.camera_view.setScene(self.scene)
+        self.camera_view.update()
+
+    def start_model_thread(self):
+        self.worker = StartModel(self)
+        self.thread = QThread()
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.start_model)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.thread.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.worker.progress.connect(self.update_image)
+        self.worker.result_list.connect(self.update_labels)
+        self.thread.start()
+
+    def update_labels(self, result):
+        self.label_name.setText(result[0])
+        self.label_roll.setText(str(result[1]))
+
+    def update_image(self, image):
+        self.scene.clear()
+        self.q_image = image
+        self.pixmap = QPixmap.fromImage(self.q_image)
+        self.scene.addPixmap(self.pixmap)   
+        self.camera_view.setScene(self.scene)
+
+    def update_camera_frame(self, frame):
+        
+            self.camera_frame = frame
+            self.update_image(self.camera_frame)
+
+        
 
 
     def view_attendance(self):
@@ -440,7 +503,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Override the closeEvent method to release the camera
 
     def closeEvent(self, event):
-        self.alive = False
+        self.worker.alive = False
+        self.thread.quit()
+        self.thread.wait()
         if self.cap:
             self.cap.release()
         super().closeEvent(event)
@@ -458,6 +523,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("open config function called.")
         self.dialog1 = ConfigurationDialog(self.centralwidget)
         self.dialog1.exec()
+
+
+    
+
+
+
 
 
 

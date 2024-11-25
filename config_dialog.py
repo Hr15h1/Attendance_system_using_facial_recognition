@@ -5,17 +5,14 @@ from PySide6.QtWidgets import (QDialog, QFormLayout, QFrame,
 
 from config_loader import load_config
 
-import device
 
 config = load_config()
-cameras = device.getDeviceList()
 
 class ConfigurationDialog(QDialog):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setupUi(self)
         self.show_config_values()
-        self.load_device_list()
 
 
     def setupUi(self, Dialog):
@@ -197,12 +194,6 @@ class ConfigurationDialog(QDialog):
 
         self.formLayout.setWidget(7, QFormLayout.FieldRole, self.lineEdit_8)
 
-        self.comboBox = QComboBox(self.formLayoutWidget)
-        self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setStyleSheet(u"")
-
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.comboBox)
-
         self.pushButton = QPushButton(self.frame)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(240, 410, 90, 37))
@@ -234,7 +225,6 @@ class ConfigurationDialog(QDialog):
         self.label_4.setText(QCoreApplication.translate("Dialog", u"Password", None))
         self.label_5.setText(QCoreApplication.translate("Dialog", u"Database host", None))
         self.label_6.setText(QCoreApplication.translate("Dialog", u"Database port", None))
-        self.label_7.setText(QCoreApplication.translate("Dialog", u"Select Camera", None))
         self.label_8.setText(QCoreApplication.translate("Dialog", u"Path to students details csv", None))
         self.label_9.setText(QCoreApplication.translate("Dialog", u"Path for exporting attendance", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"Save", None))
@@ -275,12 +265,6 @@ class ConfigurationDialog(QDialog):
         self.lineEdit_7.setText(config.STUDENTS_DETAILS_CSV)
         self.lineEdit_8.setText(config.EXPORT_PATH)
 
-    def load_device_list(self):
-        for camera in cameras:
-            self.comboBox.addItem(camera[0])
-
-        self.comboBox.setCurrentIndex(config.CAMERA_ID)
-
 
     def save_config_values(self):
         config.DB_NAME = self.lineEdit.text()
@@ -290,7 +274,6 @@ class ConfigurationDialog(QDialog):
         config.DB_PORT = self.lineEdit_5.text()
         config.STUDENTS_DETAILS_CSV = self.lineEdit_7.text()
         config.EXPORT_PATH = self.lineEdit_8.text()
-        config.CAMERA_ID = self.comboBox.currentIndex()
 
         try: 
             with open("config.py", "w") as file:
@@ -301,7 +284,7 @@ class ConfigurationDialog(QDialog):
                 file.write(f"DB_PORT = \"{config.DB_PORT}\"\n")
                 file.write(f"STUDENTS_DETAILS_CSV = \"{config.STUDENTS_DETAILS_CSV}\"\n")
                 file.write(f"EXPORT_PATH = \"{config.EXPORT_PATH}\"\n")
-                file.write(f"CAMERA_ID = {config.CAMERA_ID}\n")
+                # file.write(f"CAMERA_ID = {config.CAMERA_ID}\n")
             QMessageBox.information(self, "Success", "Configuration saved successfully. Please restart the application for changes to take effect.")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error saving configuration: {str(e)}")
