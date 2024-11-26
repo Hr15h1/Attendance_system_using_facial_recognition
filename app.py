@@ -33,7 +33,7 @@ import datetime
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt, QTimer, QThread)
 from PySide6.QtGui import (QFont, QKeyEvent, QPixmap, QImage)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
-    QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel, QLayout, QLCDNumber)
+    QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel, QLayout, QLCDNumber, QMessageBox)
 from config_dialog import ConfigurationDialog
 import csv
 import ctypes
@@ -45,6 +45,7 @@ import psycopg2
 from deepface import DeepFace
 from start_model import StartModel
 from start_camera import CameraWorker
+import time
 
 
 config = load_config()
@@ -386,6 +387,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.s = config.CAMERA_ID
         self.attendance_marked = False
         self.setFocusPolicy(Qt.StrongFocus)
+        self.camera_id = 0
 
         self.camera_frame = cv2.imread("camera_cover.png")
         self.height, self.width, img_channel = self.camera_frame.shape
@@ -428,25 +430,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def start_camera_wrapper(self):
-        self.camera_worker = CameraWorker(self.s)
-        self.camera_thread = QThread()
-        self.camera_worker.moveToThread(self.camera_thread)
-        self.camera_thread.started.connect(self.camera_worker.start_camera)
-        self.camera_worker.finished.connect(self.camera_thread.quit)
-        self.camera_worker.finished.connect(self.camera_thread.deleteLater)
-        self.camera_thread.finished.connect(self.camera_thread.deleteLater)
-        self.camera_worker.frame_captured.connect(self.update_camera_frame)
-        self.camera_thread.start()
-        self.countdown(10)
+        self.alive = True
         self.attendance_marked = False
+        self.start_camera()
+
+    def start_camera(self):
+        self.cap = cv2.VideoCapture(self.camera_id)
+        
+        frame_displayed = False
+        while self.alive:
+            ret, frame = self.cap.read()
+            frame = cv2.flip(frame, 1)
+
+            if not frame_displayed:
+                self.countdown(10)
+                frame_displayed = True
+
+            if not ret:
+                break
+
+
+            self.height, self.width, img_channels = frame.shape
+            bytesPerLine = img_channels * self.width
+            self.q_image = QImage(frame.data, self.width, self.height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
+            time.sleep(0.4)
+            self.update_camera_frame(self.q_image)
+
+            key = cv2.waitKey(1)
+            if key == 27:
+                self.alive = False
+        self.cover_camera()
 
 
     def stop_camera_wrapper(self):
-        self.camera_worker.stop_camera()
+        self.alive = False
         self.scene.clear()
         self.camera_view.setScene(self.scene)
-        if self.source is not None:
-            self.source.release()
+        if self.cap:
+            self.cap.release() 
+        self.cover_camera()
+        
+        
+    
+    def cover_camera(self):
         self.camera_frame = cv2.imread("camera_cover.png")
         self.height, self.width, img_channel = self.camera_frame.shape
         bytes_per_line = img_channel * self.width
@@ -464,6 +490,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker.finished.connect(self.thread.quit)
         self.worker.finished.connect(self.thread.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
+        self.thread.finished.connect(self.cover_camera)
         self.worker.progress.connect(self.update_image)
         self.worker.result_list.connect(self.update_labels)
         self.thread.start()
