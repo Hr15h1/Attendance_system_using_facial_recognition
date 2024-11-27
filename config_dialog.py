@@ -1,7 +1,7 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
 from PySide6.QtWidgets import (QDialog, QFormLayout, QFrame,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QWidget, QComboBox, QMessageBox)
+    QWidget, QMessageBox)
 
 from config_loader import load_config
 

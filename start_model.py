@@ -3,7 +3,7 @@ from PySide6.QtGui import QImage, QPixmap
 import csv
 import cv2
 from deepface import DeepFace
-import qimage2ndarray
+
 import numpy as np
 
 class StartModel(QObject):

@@ -25,7 +25,7 @@ Attributes:
     source: Video source for the camera.
     s: Integer representing the camera source index.
 """
-import threading
+
 import pathlib
 import sys
 import cv2
@@ -33,7 +33,7 @@ import datetime
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt, QTimer, QThread)
 from PySide6.QtGui import (QFont, QKeyEvent, QPixmap, QImage)
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QHBoxLayout, QMainWindow,
-    QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel, QLayout, QLCDNumber, QMessageBox)
+    QGridLayout, QFrame, QPushButton, QSizePolicy, QVBoxLayout, QWidget, QGraphicsScene, QLabel, QLayout, QLCDNumber)
 from config_dialog import ConfigurationDialog
 import csv
 import ctypes
@@ -44,7 +44,6 @@ from student_registration import AddStudent
 import psycopg2
 from deepface import DeepFace
 from start_model import StartModel
-from start_camera import CameraWorker
 import time
 
 
@@ -467,7 +466,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scene.clear()
         self.camera_view.setScene(self.scene)
         if self.cap:
-            self.cap.release() 
+            self.cap.release()
+        time.sleep(1.4)
         self.cover_camera()
         
         
