@@ -1,10 +1,10 @@
 # Attendance Management system using facial recognition
 
-This project implements an attendance management system using facial recognition technology. It utilizes PySide6 for the GUI, OpenCV and DeepFace library for camera operations, and SQLite for database management. The application allows users to start and stop the camera, mark attendance, and view attendance records.
+This project implements an attendance management system using facial recognition technology. It utilizes PySide6 for the GUI, OpenCV and DeepFace library for camera operations, and PostgreSQL for database management. The application allows users to mark their attendance, and view attendance records.
 
 ## Features
 
-- **Facial Recognition**: Uses OpenCV to recognize faces and mark attendance.
+- **Facial Recognition**: Uses Deepface to recognize faces and mark attendance.
 - **GUI**: Built with PySide6 for a user-friendly interface.
 - **Database Management**: Uses SQLite to store and manage attendance records.
 - **CSV Integration**: Imports student details from CSV files.
@@ -15,7 +15,7 @@ This project implements an attendance management system using facial recognition
 There are two branches created in this repository. There are some differences in the GUI of the application in the two branches.
 In the main branch:
   - The application has two buttons for starting and stopping the camera and another button for marking the attendance.
-  - The application uses an SQLITE database.
+  - The application uses a PostgreSQL database.
 
 In branch_1:
   - The application has only a single button to mark attendance. The camera will switch on and then turn of after 10 seconds, in between the attendance will be marked.

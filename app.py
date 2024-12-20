@@ -39,6 +39,7 @@ import csv
 import ctypes
 from attendance_mark import mark_attendance
 from config_loader import load_config
+
 from attendance import ViewAttendance
 from student_registration import AddStudent
 import psycopg2
@@ -434,7 +435,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.start_camera()
 
     def start_camera(self):
-        self.cap = cv2.VideoCapture(self.camera_id)
+        self.cap = cv2.VideoCapture(self.camera_id, cv2.CAP_DSHOW)
         
         frame_displayed = False
         while self.alive:
@@ -563,4 +564,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())
