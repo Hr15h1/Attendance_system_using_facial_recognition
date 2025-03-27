@@ -426,6 +426,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.attendance_marked = True
             self.total_seconds = 0
             self.stop_camera_wrapper()
+            self.label_name = ""
+            self.label_roll = ""
 
 
 
@@ -443,7 +445,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             frame = cv2.flip(frame, 1)
 
             if not frame_displayed:
-                self.countdown(10)
+                self.countdown(7)
                 frame_displayed = True
 
             if not ret:
