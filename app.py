@@ -426,8 +426,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.attendance_marked = True
             self.total_seconds = 0
             self.stop_camera_wrapper()
-            self.label_name = ""
-            self.label_roll = ""
+            self.label_name.setText("")
+            self.label_roll.setText("")
 
 
 
