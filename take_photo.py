@@ -16,7 +16,6 @@ class StartModel(QObject):
         self.alive = True
         self.main_window = main_window
     def start_model(self):
-        
         csv_file = "students.csv"
 
         # Initialize an empty dictionary

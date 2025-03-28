@@ -1,13 +1,16 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QObject, QRect,
     QSize, Qt)
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QImage, QPixmap
 from PySide6.QtWidgets import (QGraphicsView, QHBoxLayout, QSpinBox, QLabel,
     QLineEdit, QPushButton, QSizePolicy,
-    QVBoxLayout, QWidget, QMessageBox)
+    QVBoxLayout, QWidget, QGraphicsScene, QMessageBox)
 from facial_recognition_type1 import start_camera
+import os
 import cv2
 import psycopg2
 from config_loader import load_config
+from start_model import StartModel
+from deepface import DeepFace
 
 config = load_config()
 
@@ -19,7 +22,7 @@ class AddStudent(QObject):
     def setupUi(self, MainWindow):
         self.alive = False
         if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
+            MainWindow.setObjectName(u"RegistrationWindow")
         MainWindow.resize(1886, 816)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -393,66 +396,124 @@ class AddStudent(QObject):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+        self.pushButton.clicked.connect(self.take_photo)
 
+        
 
 
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Save details and take photo", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Student Details", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Register Number", None))
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Register Number", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Roll Number", None))
-        self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Roll No", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.lineEdit_4.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Phone Number", None))
-        self.lineEdit_5.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Phone Number", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Present Address", None))
-        self.lineEdit_6.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Present Address", None))
-        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Permanent Address", None))
-        self.lineEdit_7.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Permanent Address", None))
-        self.label_10.setText(QCoreApplication.translate("MainWindow", u"Email", None))
-        self.lineEdit_9.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Email", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("RegistrationWindow", u"RegistrationWindow", None))
+        self.pushButton.setText(QCoreApplication.translate("RegistrationWindow", u"Save details and take photo", None))
+        self.label.setText(QCoreApplication.translate("RegistrationWindow", u"Student Details", None))
+        self.label_2.setText(QCoreApplication.translate("RegistrationWindow", u"Register Number", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Register Number", None))
+        self.label_4.setText(QCoreApplication.translate("RegistrationWindow", u"Roll Number", None))
+        self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Roll No", None))
+        self.label_5.setText(QCoreApplication.translate("RegistrationWindow", u"Name", None))
+        self.lineEdit_4.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Name", None))
+        self.label_6.setText(QCoreApplication.translate("RegistrationWindow", u"Phone Number", None))
+        self.lineEdit_5.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Phone Number", None))
+        self.label_7.setText(QCoreApplication.translate("RegistrationWindow", u"Present Address", None))
+        self.lineEdit_6.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Present Address", None))
+        self.label_8.setText(QCoreApplication.translate("RegistrationWindow", u"Permanent Address", None))
+        self.lineEdit_7.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Permanent Address", None))
+        self.label_10.setText(QCoreApplication.translate("RegistrationWindow", u"Email", None))
+        self.lineEdit_9.setPlaceholderText(QCoreApplication.translate("RegistrationWindow", u"Email", None))
     # retranslateUi
 
     def take_photo(self):
         if not self.lineEdit_4.text().strip():
+            QMessageBox.critical(self.centralwidget, "Error", "Please enter the student name")
             return
-        self.c = config.CAMERA_ID
-        self.alive = True
-        self.source = cv2.VideoCapture(self.c)
-        flag = start_camera(self.graphicsView, self, "add_student")
-        if flag:
-            student_details = {"register_number": self.lineEdit.text(), "roll_number": self.lineEdit_3.text(), "name": self.lineEdit_4.text(), "phone_number": self.lineEdit_5.text(), "present_address": self.lineEdit_6.text(), "permanent_address": self.lineEdit_7.text(), "email": self.lineEdit_9.text()}
+        
 
-            try:
-                mydb = psycopg2.connect(
-                    host=config.DB_HOST,
-                    user=config.DB_USER,
-                    password=config.DB_PASSWORD,
-                    database=config.DB_NAME,
-                    port = config.DB_PORT
-                )
 
-                query = "INSERT INTO students_details (student_name, student_email, phone_number, present_address, permanent_address) VALUES (%s, %s, %s, %s, %s)"
+        source = config.CAMERA_ID
+        k = self.spinBox.value()
+        self.cap = cv2.VideoCapture(source)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        scene = QGraphicsScene()
+        self.graphicsView.setScene(scene)
 
-                values = (student_details["name"], student_details["email"], student_details["phone_number"], student_details["present_address"], student_details["permanent_address"])
 
-                cursor = mydb.cursor()
+        while self.alive:
+            has_frame, frame = self.cap.read()
+            if not has_frame:
+                break
+            frame = cv2.flip(frame, 1)
 
-                cursor.execute(query, values)
+            # Perform face detection
+            face = DeepFace.extract_faces(frame, detector_backend="dlib", align = True, expand_percentage=50.0)
+            if len(face) > 0:
+                # Get the bounding box coordinates
+                x_min = face[0]['facial_area']['x']
+                y_min = face[0]['facial_area']['y']
+                x_max = x_min + face[0]['facial_area']['w']
+                y_max = y_min + face[0]['facial_area']['h']
+                # Draw the bounding box and the student number
+                cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+                cv2.putText(frame, str(k), (x_min, y_min), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2, cv2.LINE_AA)
+                # Save the cropped face to the database folder
+                cropped_frame = frame[y_min:y_max, x_min:x_max]
+                student_name = self.lineEdit_4.text()
+                # path = f"./database/{student_name}"
+                path = f"./database/{student_name}"
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                cv2.imwrite(f"{path}/{k}.jpg", cropped_frame)
 
-                mydb.commit()
+            height, width, _ = frame.shape
+            bytes_per_line = 3 * width
+            q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
 
-                QMessageBox.information(self.centralwidget, "success", "Student details saved successfully")
+            pixmap = QPixmap.fromImage(q_img)
+            scene.clear()
+            scene.addPixmap(pixmap)
 
-            except psycopg2.Error as e:
-                mydb.rollback()
-                QMessageBox.critical(self.centralwidget, "Database Error", f"An error occurred while saving student details: {e}")
+            key = cv2.waitKey(1)
+            if key == ord('q') or key == ord('Q') or key == 27:
+                self.alive = False
 
-            finally:
-                cursor.close()
-                mydb.close()
+            if k == 0:
+                QMessageBox.information(self.centralwidget, "Success", "Student details saved successfully")
+                self.alive = False
+            k -= 1
+        # Release the video source and destroy the window
+        scene.clear()
+        self.graphicsView.setScene(scene)
+        self.cap.release()
+        # flag = start_camera(self.graphicsView, self, "add_student")
+        # if flag:
+        #     student_details = {"register_number": self.lineEdit.text(), "roll_number": self.lineEdit_3.text(), "name": self.lineEdit_4.text(), "phone_number": self.lineEdit_5.text(), "present_address": self.lineEdit_6.text(), "permanent_address": self.lineEdit_7.text(), "email": self.lineEdit_9.text()}
+
+        #     try:
+        #         mydb = psycopg2.connect(
+        #             host=config.DB_HOST,
+        #             user=config.DB_USER,
+        #             password=config.DB_PASSWORD,
+        #             database=config.DB_NAME,
+        #             port = config.DB_PORT
+        #         )
+
+        #         query = "INSERT INTO students_details (student_name, student_email, phone_number, present_address, permanent_address) VALUES (%s, %s, %s, %s, %s)"
+
+        #         values = (student_details["name"], student_details["email"], student_details["phone_number"], student_details["present_address"], student_details["permanent_address"])
+
+        #         cursor = mydb.cursor()
+
+        #         cursor.execute(query, values)
+
+        #         mydb.commit()
+
+        #         QMessageBox.information(self.centralwidget, "success", "Student details saved successfully")
+
+        #     except psycopg2.Error as e:
+        #         mydb.rollback()
+        #         QMessageBox.critical(self.centralwidget, "Database Error", f"An error occurred while saving student details: {e}")
+
+        #     finally:
+        #         cursor.close()
+        #         mydb.close()
